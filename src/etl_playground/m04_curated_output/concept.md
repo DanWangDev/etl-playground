@@ -82,7 +82,9 @@ Each file is tiny (< 128 MB). Hadoop/Spark overhead per file = ~150 bytes for me
 
 ```python
 # Before writing: control output file count
-df.repartition("event_date", "region").write.partitionBy("event_date", "region").parquet(path)
+df.repartition("event_date", "region").write.partitionBy(
+    "event_date", "region"
+).parquet(path)
 ```
 
 ### 4. Hive-Style Partition Layout

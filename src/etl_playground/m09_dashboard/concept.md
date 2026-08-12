@@ -71,7 +71,7 @@ WHERE event_date BETWEEN '{start_date}' AND '{end_date}'
 ```python
 conn = duckdb.connect(":memory:")
 df = conn.execute(sql).df()  # Run SQL, get pandas DataFrame
-st.altair_chart(chart)        # Render as interactive chart
+st.altair_chart(chart)  # Render as interactive chart
 ```
 
 DuckDB reads Parquet directly — no intermediate loading step. Queries on 500K rows complete in < 50ms.

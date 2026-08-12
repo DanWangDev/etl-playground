@@ -70,12 +70,14 @@ count = df.count()  # ← 动作
 ### 3. 显式 Schema
 
 ```python
-VIEWING_EVENTS_SCHEMA = StructType([
-    StructField("event_id", StringType(), False),    # NOT NULL
-    StructField("customer_id", StringType(), True),  # 可为空
-    StructField("watch_minutes", DoubleType(), True),
-    # ...
-])
+VIEWING_EVENTS_SCHEMA = StructType(
+    [
+        StructField("event_id", StringType(), False),  # NOT NULL
+        StructField("customer_id", StringType(), True),  # 可为空
+        StructField("watch_minutes", DoubleType(), True),
+        # ...
+    ]
+)
 ```
 
 **为什么显式而非推断？**

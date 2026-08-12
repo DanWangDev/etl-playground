@@ -70,12 +70,14 @@ You can chain dozens of transformations — Spark builds the entire DAG first, t
 ### 3. Explicit Schemas
 
 ```python
-VIEWING_EVENTS_SCHEMA = StructType([
-    StructField("event_id", StringType(), False),    # NOT NULL
-    StructField("customer_id", StringType(), True),  # nullable
-    StructField("watch_minutes", DoubleType(), True),
-    # ...
-])
+VIEWING_EVENTS_SCHEMA = StructType(
+    [
+        StructField("event_id", StringType(), False),  # NOT NULL
+        StructField("customer_id", StringType(), True),  # nullable
+        StructField("watch_minutes", DoubleType(), True),
+        # ...
+    ]
+)
 ```
 
 **Why explicit, not inferred?**
