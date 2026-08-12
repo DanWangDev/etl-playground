@@ -9,7 +9,7 @@ from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 
 
-def derive_fields(df: DataFrame, log: "object") -> DataFrame:
+def derive_fields(df: DataFrame, log=None) -> DataFrame:
     """Calculate derived analytical fields.
 
     These are narrow transformations — no shuffle required.
@@ -38,9 +38,10 @@ def derive_fields(df: DataFrame, log: "object") -> DataFrame:
         )
     )
 
-    log.info("Derived fields calculated (narrow transformation)")
-    log.detail("  launch_delay_days = datediff(actual, planned)")
-    log.detail("  watch_hours = watch_minutes / 60.0")
-    log.detail("  is_completed = completion_rate >= 0.95")
+    if log:
+        log.info("Derived fields calculated (narrow transformation)")
+        log.detail("  launch_delay_days = datediff(actual, planned)")
+        log.detail("  watch_hours = watch_minutes / 60.0")
+        log.detail("  is_completed = completion_rate >= 0.95")
 
     return result

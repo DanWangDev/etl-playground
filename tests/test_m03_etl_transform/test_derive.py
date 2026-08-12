@@ -6,14 +6,6 @@ from pyspark.sql import Row, SparkSession
 from etl_playground.m03_etl_transform.derive import derive_fields
 
 
-class NoopLog:
-    def info(self, *a, **kw):
-        pass
-
-    def detail(self, *a, **kw):
-        pass
-
-
 @pytest.mark.skipif(
     "sys.version_info >= (3, 14)",
     reason="PySpark cloudpickle not yet compatible with Python 3.14",
@@ -32,7 +24,7 @@ def test_watch_hours_calculation(spark: SparkSession):
         ),
     ]
     df = spark.createDataFrame(rows)
-    result = derive_fields(df, NoopLog())
+    result = derive_fields(df)
 
     row = result.collect()[0]
     assert row["watch_hours"] == 2.0  # 120 / 60
@@ -65,7 +57,7 @@ def test_is_completed_flag(spark: SparkSession):
         ),
     ]
     df = spark.createDataFrame(rows)
-    result = derive_fields(df, NoopLog())
+    result = derive_fields(df)
 
     rows_out = result.orderBy("event_id").collect()
     assert rows_out[0]["is_completed"] is True
@@ -90,7 +82,7 @@ def test_launch_delay_null_when_missing_dates(spark: SparkSession):
         ),
     ]
     df = spark.createDataFrame(rows)
-    result = derive_fields(df, NoopLog())
+    result = derive_fields(df)
 
     row = result.collect()[0]
     assert row["launch_delay_days"] is None
