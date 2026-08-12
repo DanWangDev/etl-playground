@@ -19,12 +19,19 @@ SELECT
     content_id,
     SUM(watch_minutes) / 60.0 AS watch_hours
 FROM '{source}'
-WHERE event_date BETWEEN '2026-08-01' AND '2026-08-07'
+WHERE {date_filter}
   AND region = 'UK'
 GROUP BY region, content_id
 ORDER BY watch_hours DESC
 LIMIT 20
 """
+
+CSV_DATE_FILTER = (
+    "CAST(event_timestamp AS DATE) BETWEEN '2026-08-01' AND '2026-08-07'"
+)
+PARQUET_DATE_FILTER = (
+    "event_date BETWEEN '2026-08-01' AND '2026-08-07'"
+)
 
 
 def run_csv_baseline(csv_path: str, log: "ETLLogger") -> dict:
@@ -36,7 +43,10 @@ def run_csv_baseline(csv_path: str, log: "ETLLogger") -> dict:
 
     log.info("Running CSV baseline (unpartitioned, full scan)...")
 
-    sql = BENCHMARK_SQL.format(source=str(Path(csv_path) / "*.csv"))
+    sql = BENCHMARK_SQL.format(
+        source=str(Path(csv_path) / "*.csv"),
+        date_filter=CSV_DATE_FILTER,
+    )
 
     t0 = time.perf_counter()
     explain = conn.execute(f"EXPLAIN ANALYZE {sql}").fetchall()
@@ -71,7 +81,10 @@ def run_parquet_optimized(parquet_path: str, log: "ETLLogger") -> dict:
     log.info("Running Parquet optimized (partitioned, column pruning)...")
 
     # Use glob to include all partition subdirectories
-    sql = BENCHMARK_SQL.format(source=str(Path(parquet_path) / "**" / "*.parquet"))
+    sql = BENCHMARK_SQL.format(
+        source=str(Path(parquet_path) / "**" / "*.parquet"),
+        date_filter=PARQUET_DATE_FILTER,
+    )
 
     t0 = time.perf_counter()
     explain = conn.execute(f"EXPLAIN ANALYZE {sql}").fetchall()
