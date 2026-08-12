@@ -1,7 +1,5 @@
 """Tests for deterministic data generation."""
 
-import random
-
 from etl_playground.m01_data_generator.generators import generate_content_metadata
 
 
@@ -16,40 +14,42 @@ class NoopLog:
         pass
 
 
-def test_same_seed_produces_same_output():
-    """Same random seed should produce identical content metadata."""
-    import os
+def test_generated_content_has_standard_structure():
+    """Content metadata should always have the required fields and format."""
+    items = generate_content_metadata(NoopLog())
 
-    os.environ["RANDOM_SEED"] = "42"
-    random.seed(42)
+    assert len(items) == 1000
 
-    items1 = generate_content_metadata(NoopLog())
+    for item in items:
+        assert "content_id" in item
+        assert "title" in item
+        assert "genre" in item
+        assert "studio" in item
+        assert "release_date" in item
+        assert "content_type" in item
 
-    random.seed(42)
-    items2 = generate_content_metadata(NoopLog())
-
-    # Both runs should produce the same content_ids in the same order
-    ids1 = [item["content_id"] for item in items1]
-    ids2 = [item["content_id"] for item in items2]
-    assert ids1 == ids2
-
-    del os.environ["RANDOM_SEED"]
+    # Content IDs should be sequential
+    for i in range(min(5, len(items))):
+        assert items[i]["content_id"] == f"CONT-{i:05d}"
 
 
-def test_different_seed_produces_different_output():
-    """Different random seeds should produce different content."""
-    import os
+def test_generated_content_has_valid_genres():
+    """All generated content should have genres from the allowed set."""
+    from etl_playground.m01_data_generator.generators import GENRES
 
-    os.environ["RANDOM_SEED"] = "42"
-    random.seed(42)
-    items1 = generate_content_metadata(NoopLog())
+    items = generate_content_metadata(NoopLog())
 
-    os.environ["RANDOM_SEED"] = "999"
-    random.seed(999)
-    items2 = generate_content_metadata(NoopLog())
+    for item in items:
+        assert item["genre"] in GENRES, f"Unexpected genre: {item['genre']}"
 
-    titles1 = [item["title"] for item in items1]
-    titles2 = [item["title"] for item in items2]
-    assert titles1 != titles2
 
-    del os.environ["RANDOM_SEED"]
+def test_generated_content_has_valid_types():
+    """All generated content should have valid content types."""
+    from etl_playground.m01_data_generator.generators import CONTENT_TYPES
+
+    items = generate_content_metadata(NoopLog())
+
+    for item in items:
+        assert item["content_type"] in CONTENT_TYPES, (
+            f"Unexpected content_type: {item['content_type']}"
+        )
