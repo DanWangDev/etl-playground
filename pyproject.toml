@@ -1,0 +1,56 @@
+[project]
+name = "etl-playground"
+version = "0.1.0"
+description = "Hands-on ETL pipeline playground — build a credible data engineering pipeline from scratch"
+requires-python = ">=3.11"
+dependencies = [
+    "pyspark>=3.5,<4.0",       # Spark DataFrame API (local mode)
+    "duckdb>=1.1",              # Athena/Redshift equivalent SQL engine
+    "pyarrow>=16.0",            # Parquet/Arrow support
+    "pydantic>=2.7",            # Schema validation, settings
+    "pydantic-settings>=2.3",   # Env-based config
+    "python-dotenv>=1.0",       # .env loading
+    "rich>=13.7",               # Beautiful CLI output (logging)
+    "pyyaml>=6.0",              # Schema registry YAML parsing
+    "streamlit>=1.37",          # Dashboard (QuickSight equivalent)
+    "altair>=5.3",              # Declarative charts for Streamlit
+    "pandas>=2.2",              # Small-data utilities
+    "faker>=28.0",              # Synthetic data generation
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "pytest-cov>=5.0",
+    "ruff>=0.5",
+]
+streaming = [
+    "kafka-python>=2.0",        # Redpanda/Kafka client (Phase 2)
+]
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["src/etl_playground"]
+
+[tool.coverage.report]
+fail_under = 70
+exclude_also = [
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"

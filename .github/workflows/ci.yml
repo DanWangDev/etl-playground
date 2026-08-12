@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Fast lane: Unit tests + lint ──
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java (required for PySpark)
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run tests
+        run: uv run pytest --cov=etl_playground --cov-report=term-missing -v
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Lint
+        run: uv run ruff check src/ tests/
+
+      - name: Format check
+        run: uv run ruff format --check src/ tests/
+
+  # ── Integration lane: full pipeline on small data ──
+  integration:
+    runs-on: ubuntu-latest
+    needs: [test]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Generate data (small scale)
+        run: uv run python -m etl_playground.m01_data_generator.exercise --scale 10000
+
+      - name: Run Spark foundation
+        run: uv run python -m etl_playground.m02_spark_foundation.exercise
+
+      - name: Run ETL transform
+        run: uv run python -m etl_playground.m03_etl_transform.exercise
+
+      - name: Run curated output
+        run: uv run python -m etl_playground.m04_curated_output.exercise
+
+      - name: Run benchmark
+        run: uv run python -m etl_playground.m05_benchmark.exercise
+
+      - name: Run incremental ETL (idempotency check)
+        run: uv run python -m etl_playground.m06_incremental_etl.exercise --mode rerun-test
+
+      - name: Run lake queries
+        run: uv run python -m etl_playground.m07_lake_queries.exercise
+
+      - name: Run warehouse build
+        run: uv run python -m etl_playground.m08_warehouse.exercise

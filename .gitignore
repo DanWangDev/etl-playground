@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project data (generated)
+data/raw/*
+data/curated/*
+data/rejected/*
+!data/raw/.gitkeep
+!data/curated/.gitkeep
+!data/rejected/.gitkeep
+data/warehouse.duckdb
+
+# Run logs
+runs/*.json
+
+# Spark
+metastore_db/
+derby.log
+spark-warehouse/
+
+# DuckDB
+*.duckdb.wal
+
+# Streamlit
+.streamlit/
+
+# Ruff
+.ruff_cache/
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Misc
+*.log
