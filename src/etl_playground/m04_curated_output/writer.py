@@ -13,7 +13,7 @@ def write_partitioned_parquet(
     df: DataFrame,
     output_base: str,
     partition_keys: list[str] | None = None,
-    log: "object" | None = None,
+    log=None,
 ) -> str:
     """Write DataFrame as partitioned Parquet.
 
@@ -56,7 +56,7 @@ def write_partitioned_parquet(
     return output_base
 
 
-def list_partitions(output_base: str, log: "object") -> list[str]:
+def list_partitions(output_base: str, log=None) -> list[str]:
     """List the partition directories created.
 
     Demonstrates the partition structure: event_date=YYYY-MM-DD/region=XX/
