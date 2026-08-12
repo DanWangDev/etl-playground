@@ -56,7 +56,7 @@ def test_fact_viewing_has_composite_primary_key():
 
     # Second insert with same PK should fail
     import pytest
-    with pytest.raises(Exception):
+    with pytest.raises(duckdb.duckdb.ConstraintException):
         conn.execute("""
             INSERT INTO fact_viewing VALUES (1, 1, 1, 20260801, 200, 6000.0, 100.0, 60, 0.80)
         """)
