@@ -13,11 +13,12 @@ Usage:
 """
 
 import argparse
-import time
 from datetime import date
-from pathlib import Path
 
-from etl_playground.m06_incremental_etl.backfill import backfill_partitions, parse_date_range
+from etl_playground.m06_incremental_etl.backfill import (
+    backfill_partitions,
+    parse_date_range,
+)
 from etl_playground.m06_incremental_etl.idempotent import (
     load_previous_state,
     save_run_state,
@@ -30,12 +31,21 @@ from etl_playground.shared.logging import etl_context
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Incremental ETL operations")
-    parser.add_argument("--mode", choices=["incremental", "backfill", "rerun-test"],
-                        default="incremental")
-    parser.add_argument("--start", type=str, help="Start date (YYYY-MM-DD) for backfill")
+    parser.add_argument(
+        "--mode",
+        choices=["incremental", "backfill", "rerun-test"],
+        default="incremental",
+    )
+    parser.add_argument(
+        "--start", type=str, help="Start date (YYYY-MM-DD) for backfill"
+    )
     parser.add_argument("--end", type=str, help="End date (YYYY-MM-DD) for backfill")
-    parser.add_argument("--late-window", type=int, default=2,
-                        help="Late-arrival reprocessing window in days")
+    parser.add_argument(
+        "--late-window",
+        type=int,
+        default=2,
+        help="Late-arrival reprocessing window in days",
+    )
     args = parser.parse_args()
 
     settings = get_settings()
@@ -63,15 +73,19 @@ def _run_incremental(log, run, settings, args) -> None:
     log.info(f"Curated zone: {curated_base}")
 
     new_dates, reprocess_dates = find_new_partitions(
-        raw_base, curated_base,
+        raw_base,
+        curated_base,
         late_window_days=args.late_window,
     )
 
-    log.table("Partition Scan Results", [
-        ("New partitions (unprocessed)", str(len(new_dates))),
-        ("Late-window partitions (reprocess)", str(len(reprocess_dates))),
-        ("Late window", f"D-{args.late_window} through D"),
-    ])
+    log.table(
+        "Partition Scan Results",
+        [
+            ("New partitions (unprocessed)", str(len(new_dates))),
+            ("Late-window partitions (reprocess)", str(len(reprocess_dates))),
+            ("Late window", f"D-{args.late_window} through D"),
+        ],
+    )
 
     if new_dates:
         log.info(f"New dates to process: {[d.isoformat() for d in new_dates]}")
@@ -79,9 +93,13 @@ def _run_incremental(log, run, settings, args) -> None:
         log.success("No new partitions — everything is up to date")
 
     if reprocess_dates:
-        log.info(f"Late-window dates to reprocess: {[d.isoformat() for d in reprocess_dates]}")
-        log.warn(f"These dates may receive late-arriving events. "
-                 f"Processing {len(reprocess_dates)} partitions in late window.")
+        log.info(
+            f"Late-window dates to reprocess: {[d.isoformat() for d in reprocess_dates]}"
+        )
+        log.warn(
+            f"These dates may receive late-arriving events. "
+            f"Processing {len(reprocess_dates)} partitions in late window."
+        )
 
     # In a full implementation, this would trigger the Spark ETL pipeline
     # for each date. For the exercise, we demonstrate the partition detection.
@@ -110,16 +128,20 @@ def _run_backfill(log, run, settings, args) -> None:
     log.info(f"Backfill range: {dates[0]} → {dates[-1]} ({len(dates)} dates)")
 
     # Mock process function for demonstration
-    def mock_process(d: date, l) -> int:
+    def mock_process(d: date, log) -> int:
         import random
+
         random.seed(hash(d.isoformat()))
         return random.randint(15000, 17000)
 
     results = backfill_partitions(dates, mock_process, log)
-    log.table("Backfill Results", [
-        (d, f"{count:,} rows" if count >= 0 else "FAILED")
-        for d, count in sorted(results.items())
-    ])
+    log.table(
+        "Backfill Results",
+        [
+            (d, f"{count:,} rows" if count >= 0 else "FAILED")
+            for d, count in sorted(results.items())
+        ],
+    )
 
 
 def _run_rerun_test(log, run, settings, args) -> None:
@@ -159,8 +181,12 @@ def _run_rerun_test(log, run, settings, args) -> None:
     else:
         log.error("Rerun test FAILED — investigate partition differences")
 
-    log.info("Key principle: partition-level overwrite (INSERT OVERWRITE) ensures idempotency.")
-    log.info("As long as the input + transform logic is deterministic, reruns are safe.")
+    log.info(
+        "Key principle: partition-level overwrite (INSERT OVERWRITE) ensures idempotency."
+    )
+    log.info(
+        "As long as the input + transform logic is deterministic, reruns are safe."
+    )
 
 
 if __name__ == "__main__":

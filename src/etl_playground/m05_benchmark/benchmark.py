@@ -12,7 +12,6 @@ from pathlib import Path
 
 import duckdb
 
-
 BENCHMARK_SQL = """
 SELECT
     region,
@@ -26,17 +25,12 @@ ORDER BY watch_hours DESC
 LIMIT 20
 """
 
-CSV_DATE_FILTER = (
-    "CAST(event_timestamp AS DATE) BETWEEN '2026-08-01' AND '2026-08-07'"
-)
-PARQUET_DATE_FILTER = (
-    "event_date BETWEEN '2026-08-01' AND '2026-08-07'"
-)
+CSV_DATE_FILTER = "CAST(event_timestamp AS DATE) BETWEEN '2026-08-01' AND '2026-08-07'"
+PARQUET_DATE_FILTER = "event_date BETWEEN '2026-08-01' AND '2026-08-07'"
 
 
-def run_csv_baseline(csv_path: str, log: "ETLLogger") -> dict:
+def run_csv_baseline(csv_path: str, log: "object") -> dict:
     """Run benchmark query against unpartitioned CSV files."""
-    from etl_playground.shared.logging import ETLLogger
 
     conn = duckdb.connect(":memory:")
     conn.execute("SET enable_progress_bar = false")
@@ -56,7 +50,8 @@ def run_csv_baseline(csv_path: str, log: "ETLLogger") -> dict:
 
     # Extract bytes scanned from EXPLAIN
     import re
-    bytes_match = re.search(r'(\d+\.?\d*)\s*(MB|GB|KB)', explain_text)
+
+    bytes_match = re.search(r"(\d+\.?\d*)\s*(MB|GB|KB)", explain_text)
     bytes_scanned = bytes_match.group(0) if bytes_match else "unknown"
 
     result = {
@@ -71,9 +66,8 @@ def run_csv_baseline(csv_path: str, log: "ETLLogger") -> dict:
     return result
 
 
-def run_parquet_optimized(parquet_path: str, log: "ETLLogger") -> dict:
+def run_parquet_optimized(parquet_path: str, log: "object") -> dict:
     """Run benchmark query against partitioned Parquet files."""
-    from etl_playground.shared.logging import ETLLogger
 
     conn = duckdb.connect(":memory:")
     conn.execute("SET enable_progress_bar = false")
@@ -93,7 +87,8 @@ def run_parquet_optimized(parquet_path: str, log: "ETLLogger") -> dict:
     explain_text = "\n".join(str(row[0]) for row in explain)
 
     import re
-    bytes_match = re.search(r'(\d+\.?\d*)\s*(MB|GB|KB)', explain_text)
+
+    bytes_match = re.search(r"(\d+\.?\d*)\s*(MB|GB|KB)", explain_text)
     bytes_scanned = bytes_match.group(0) if bytes_match else "unknown"
 
     result = {
@@ -108,9 +103,8 @@ def run_parquet_optimized(parquet_path: str, log: "ETLLogger") -> dict:
     return result
 
 
-def compare_results(csv_result: dict, parquet_result: dict, log: "ETLLogger") -> None:
+def compare_results(csv_result: dict, parquet_result: dict, log: "object") -> None:
     """Print a comparison table of CSV vs Parquet benchmark results."""
-    from etl_playground.shared.logging import ETLLogger
 
     csv_time = csv_result["query_time_s"]
     pq_time = parquet_result["query_time_s"]
@@ -124,13 +118,25 @@ def compare_results(csv_result: dict, parquet_result: dict, log: "ETLLogger") ->
         [
             ("Format", csv_result["format"], parquet_result["format"]),
             ("Query time", f"{csv_time:.2f}s", f"{pq_time:.2f}s"),
-            ("Data scanned", csv_result["bytes_scanned"], parquet_result["bytes_scanned"]),
+            (
+                "Data scanned",
+                csv_result["bytes_scanned"],
+                parquet_result["bytes_scanned"],
+            ),
             ("Speedup", "—", f"{speedup:.1f}×"),
         ],
     )
 
     log.section("Why is Parquet faster?")
-    log.info("1. PARTITION PRUNING: Only date+region partitions matching the filter are read")
-    log.info("2. COLUMN PRUNING: Only region, content_id, watch_minutes columns are read")
-    log.info("3. COMPRESSION: Parquet Snappy compression reduces I/O ~3-4× vs uncompressed CSV")
-    log.info("4. PREDICATE PUSHDOWN: Filters pushed to the storage layer, reducing rows early")
+    log.info(
+        "1. PARTITION PRUNING: Only date+region partitions matching the filter are read"
+    )
+    log.info(
+        "2. COLUMN PRUNING: Only region, content_id, watch_minutes columns are read"
+    )
+    log.info(
+        "3. COMPRESSION: Parquet Snappy compression reduces I/O ~3-4× vs uncompressed CSV"
+    )
+    log.info(
+        "4. PREDICATE PUSHDOWN: Filters pushed to the storage layer, reducing rows early"
+    )

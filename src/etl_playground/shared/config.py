@@ -3,7 +3,6 @@
 ETL Playground settings — loaded from .env file with Pydantic validation.
 """
 
-import os
 from pathlib import Path
 from typing import Literal
 

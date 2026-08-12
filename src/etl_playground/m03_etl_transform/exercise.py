@@ -23,7 +23,7 @@ from etl_playground.m03_etl_transform.enrich import (
     enrich_with_metadata,
 )
 from etl_playground.m03_etl_transform.normalize import normalize_timestamps
-from etl_playground.shared.logging import etl_context, get_logger
+from etl_playground.shared.logging import etl_context
 from etl_playground.shared.spark import create_spark_session
 
 
@@ -36,7 +36,11 @@ def main() -> None:
         log.header("ETL Playground — Full Transform")
 
         spark = create_spark_session("m03-etl-transform")
-        ingest_date = date.today() if args.ingest_date is None else date.fromisoformat(args.ingest_date)
+        ingest_date = (
+            date.today()
+            if args.ingest_date is None
+            else date.fromisoformat(args.ingest_date)
+        )
 
         # ── Read raw data ──
         log.stage("Stage 0/6: Read Raw Data")
@@ -44,9 +48,11 @@ def main() -> None:
         df_raw = read_viewing_events(spark, ingest_date)
         df_metadata = read_content_metadata(spark)
         df_launch = read_content_launch(spark)
-        log.info(f"Viewing events: {df_raw.count():,} rows, "
-                 f"Content metadata: {df_metadata.count():,}, "
-                 f"Content launch: {df_launch.count():,}")
+        log.info(
+            f"Viewing events: {df_raw.count():,} rows, "
+            f"Content metadata: {df_metadata.count():,}, "
+            f"Content launch: {df_launch.count():,}"
+        )
 
         # ── Stage 1: Normalize ──
         log.stage("Stage 1/6: Normalize Timestamps")
@@ -85,7 +91,9 @@ def main() -> None:
         run.end_stage("aggregate", output_rows=df_daily.count())
 
         # ── Write intermediate output for next modules ──
-        daily_path = f"data/curated/daily_aggregates/ingest_date={ingest_date.isoformat()}"
+        daily_path = (
+            f"data/curated/daily_aggregates/ingest_date={ingest_date.isoformat()}"
+        )
         df_daily.write.mode("overwrite").parquet(daily_path)
         log.success(f"Daily aggregates written: {daily_path}")
 

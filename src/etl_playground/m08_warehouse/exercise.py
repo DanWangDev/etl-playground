@@ -69,17 +69,22 @@ def main() -> None:
         """).fetchall()
 
         for row in result:
-            log.detail(f"  {row[0]:20s} | {str(row[1])[:40]:40s} | {row[2]:8.1f}h | {row[3]:5d} views | {row[4]:4d} completed")
+            log.detail(
+                f"  {row[0]:20s} | {str(row[1])[:40]:40s} | {row[2]:8.1f}h | {row[3]:5d} views | {row[4]:4d} completed"
+            )
 
         # ── Summary ──
         log.header("Warehouse Summary")
-        log.table("Star Schema Tables", [
-            ("dim_date", f"{dim_counts.get('dim_date', 0):,} rows"),
-            ("dim_content", f"{dim_counts.get('dim_content', 0):,} rows"),
-            ("dim_region", f"{dim_counts.get('dim_region', 0):,} rows"),
-            ("dim_device", f"{dim_counts.get('dim_device', 0):,} rows"),
-            ("fact_viewing", f"{fact_counts.get('fact_viewing', 0):,} rows"),
-        ])
+        log.table(
+            "Star Schema Tables",
+            [
+                ("dim_date", f"{dim_counts.get('dim_date', 0):,} rows"),
+                ("dim_content", f"{dim_counts.get('dim_content', 0):,} rows"),
+                ("dim_region", f"{dim_counts.get('dim_region', 0):,} rows"),
+                ("dim_device", f"{dim_counts.get('dim_device', 0):,} rows"),
+                ("fact_viewing", f"{fact_counts.get('fact_viewing', 0):,} rows"),
+            ],
+        )
         log.info(f"Warehouse database: {db_path}")
 
         conn.close()

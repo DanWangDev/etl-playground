@@ -11,7 +11,7 @@ from pyspark.sql import functions as F
 def enrich_with_metadata(
     df: DataFrame,
     metadata_df: DataFrame,
-    log: "ETLLogger",
+    log: "object",
 ) -> DataFrame:
     """Join viewing events with content metadata using BROADCAST JOIN.
 
@@ -20,10 +20,11 @@ def enrich_with_metadata(
 
     Returns enriched DataFrame with title, genre, studio, release_date, content_type.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     log.info("Enriching with content_metadata (BROADCAST JOIN)...")
-    log.spark(f"Left: {df.count():,} viewing events | Right: {metadata_df.count():,} content items")
+    log.spark(
+        f"Left: {df.count():,} viewing events | Right: {metadata_df.count():,} content items"
+    )
     log.spark("Strategy: BROADCAST — content_metadata fits in executor memory (< 1 MB)")
     log.spark("This avoids shuffling the large viewing_events table")
 
@@ -45,14 +46,13 @@ def enrich_with_metadata(
 def enrich_with_launch(
     df: DataFrame,
     launch_df: DataFrame,
-    log: "ETLLogger",
+    log: "object",
 ) -> DataFrame:
     """Join with content_launch data.
 
     Uses a regular sort-merge join (content_launch is 4,000 rows — small but
     we use the default join to demonstrate non-broadcast behavior).
     """
-    from etl_playground.shared.logging import ETLLogger
 
     log.info("Enriching with content_launch (default sort-merge join)...")
     log.spark(f"Join key: content_id + region | Right side: {launch_df.count():,} rows")

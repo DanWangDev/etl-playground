@@ -78,23 +78,30 @@ def validate_enum_fields(df: DataFrame) -> tuple[DataFrame, DataFrame]:
     # Build detailed rejection reason
     rejected = df.filter(~all_ok).withColumn(
         "rejection_reason",
-        F.concat_ws("; ",
+        F.concat_ws(
+            "; ",
             F.when(~region_ok, F.concat(F.lit("INVALID_REGION="), F.col("region"))),
-            F.when(~device_ok, F.concat(F.lit("INVALID_DEVICE="), F.col("device_type"))),
-            F.when(~event_ok, F.concat(F.lit("INVALID_EVENT_TYPE="), F.col("event_type"))),
-            F.when(~sub_ok, F.concat(F.lit("INVALID_SUBSCRIPTION="), F.col("subscription_type"))),
+            F.when(
+                ~device_ok, F.concat(F.lit("INVALID_DEVICE="), F.col("device_type"))
+            ),
+            F.when(
+                ~event_ok, F.concat(F.lit("INVALID_EVENT_TYPE="), F.col("event_type"))
+            ),
+            F.when(
+                ~sub_ok,
+                F.concat(F.lit("INVALID_SUBSCRIPTION="), F.col("subscription_type")),
+            ),
         ),
     )
     return valid, rejected
 
 
-def validate_all(df: DataFrame, log: "ETLLogger") -> tuple[DataFrame, DataFrame]:
+def validate_all(df: DataFrame, log: "object") -> tuple[DataFrame, DataFrame]:
     """Run all validators in sequence, accumulating rejected rows.
 
     Returns:
         (clean_df, all_rejected_df) where all_rejected_df has a rejection_reason column.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     total_input = df.count()
 
@@ -114,8 +121,10 @@ def validate_all(df: DataFrame, log: "ETLLogger") -> tuple[DataFrame, DataFrame]
     total_valid = valid.count()
     total_rejected = rejected.count()
 
-    log.detail(f"Validation: {total_input:,} input → {total_valid:,} valid, "
-               f"{total_rejected:,} rejected")
+    log.detail(
+        f"Validation: {total_input:,} input → {total_valid:,} valid, "
+        f"{total_rejected:,} rejected"
+    )
 
     # Breakdown
     if total_rejected > 0:

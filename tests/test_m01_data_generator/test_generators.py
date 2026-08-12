@@ -5,11 +5,17 @@ from etl_playground.m01_data_generator.generators import generate_content_metada
 
 def test_generate_content_metadata_has_correct_count():
     """Content metadata should generate NUM_CONTENT_ITEMS rows."""
+
     # We use a no-op logger for tests
     class NoopLog:
-        def info(self, *a, **kw): pass
-        def success(self, *a, **kw): pass
-        def detail(self, *a, **kw): pass
+        def info(self, *a, **kw):
+            pass
+
+        def success(self, *a, **kw):
+            pass
+
+        def detail(self, *a, **kw):
+            pass
 
     items = generate_content_metadata(NoopLog())
     assert len(items) == 1000  # Default from settings

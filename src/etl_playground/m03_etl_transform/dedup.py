@@ -8,7 +8,9 @@ from pyspark.sql import DataFrame, Window
 from pyspark.sql import functions as F
 
 
-def deduplicate_by_event_id(df: DataFrame, log: "ETLLogger | None" = None) -> tuple[DataFrame, DataFrame]:
+def deduplicate_by_event_id(
+    df: DataFrame, log: "object | None" = None
+) -> tuple[DataFrame, DataFrame]:
     """Deduplicate on event_id, keeping the latest timestamp.
 
     Uses a window function: row_number() OVER (PARTITION BY event_id ORDER BY event_timestamp DESC).
@@ -20,7 +22,6 @@ def deduplicate_by_event_id(df: DataFrame, log: "ETLLogger | None" = None) -> tu
     Returns:
         (unique_df, duplicates_df) — unique records and rejected duplicates.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     input_count = df.count()
 
@@ -29,16 +30,23 @@ def deduplicate_by_event_id(df: DataFrame, log: "ETLLogger | None" = None) -> tu
     ranked = df.withColumn("_row_num", F.row_number().over(window_spec))
 
     unique = ranked.filter(F.col("_row_num") == 1).drop("_row_num")
-    duplicates = ranked.filter(F.col("_row_num") > 1).drop("_row_num").withColumn(
-        "rejection_reason", F.lit("DUPLICATE_EVENT_ID")
+    duplicates = (
+        ranked.filter(F.col("_row_num") > 1)
+        .drop("_row_num")
+        .withColumn("rejection_reason", F.lit("DUPLICATE_EVENT_ID"))
     )
 
     output_count = unique.count()
     dup_count = duplicates.count()
 
-    log.info(f"Dedup: {input_count:,} input → {output_count:,} unique "
-             f"({dup_count:,} duplicates removed)")
-    log.spark(f"SHUFFLE triggered by: row_number() PARTITION BY event_id "
-              f"(window function requires data redistribution)")
+    if log:
+        log.info(
+            f"Dedup: {input_count:,} input → {output_count:,} unique "
+            f"({dup_count:,} duplicates removed)"
+        )
+        log.spark(
+            "SHUFFLE triggered by: row_number() PARTITION BY event_id "
+            "(window function requires data redistribution)"
+        )
 
     return unique, duplicates

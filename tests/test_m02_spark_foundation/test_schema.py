@@ -5,10 +5,10 @@ from pyspark.sql.types import StructType
 from etl_playground.m02_spark_foundation.schema import (
     CONTENT_LAUNCH_SCHEMA,
     CONTENT_METADATA_SCHEMA,
-    VIEWING_EVENTS_SCHEMA,
-    VALID_REGIONS,
     VALID_DEVICE_TYPES,
     VALID_EVENT_TYPES,
+    VALID_REGIONS,
+    VIEWING_EVENTS_SCHEMA,
 )
 
 

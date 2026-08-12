@@ -75,7 +75,9 @@ def _parse_duckdb_explain(explain_text: str) -> dict:
     metrics: dict = {"explain_raw": explain_text}
 
     # Extract bytes scanned
-    scan_match = re.search(r"(\d+\.?\d*)\s*(GB|MB|KB|bytes)", explain_text, re.IGNORECASE)
+    scan_match = re.search(
+        r"(\d+\.?\d*)\s*(GB|MB|KB|bytes)", explain_text, re.IGNORECASE
+    )
     if scan_match:
         metrics["bytes_scanned_str"] = f"{scan_match.group(1)} {scan_match.group(2)}"
 

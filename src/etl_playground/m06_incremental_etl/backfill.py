@@ -47,7 +47,7 @@ def parse_date_range(
 def backfill_partitions(
     dates: list[date],
     process_fn,
-    log: "ETLLogger",
+    log: "object",
 ) -> dict[str, int]:
     """Process a list of dates through the ETL pipeline.
 
@@ -59,14 +59,13 @@ def backfill_partitions(
     Returns:
         Dict of {date.isoformat(): row_count} for each processed date.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     results: dict[str, int] = {}
     total = len(dates)
 
     log.info(f"Backfill: {total} dates to process")
     for i, d in enumerate(dates):
-        log.info(f"[{i+1}/{total}] Processing {d.isoformat()}...")
+        log.info(f"[{i + 1}/{total}] Processing {d.isoformat()}...")
         try:
             count = process_fn(d, log)
             results[d.isoformat()] = count

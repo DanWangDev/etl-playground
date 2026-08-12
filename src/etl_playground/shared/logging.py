@@ -15,7 +15,7 @@ import json
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -30,7 +30,6 @@ from rich.progress import (
 )
 from rich.rule import Rule
 from rich.table import Table
-from rich.text import Text
 
 console = Console()
 
@@ -120,7 +119,12 @@ class ETLLogger:
             t.add_row(key, val)
         console.print(t)
 
-    def table_triple(self, title: str, headers: tuple[str, str, str], rows: list[tuple[str, str, str]]) -> None:
+    def table_triple(
+        self,
+        title: str,
+        headers: tuple[str, str, str],
+        rows: list[tuple[str, str, str]],
+    ) -> None:
         """Print a three-column table."""
         t = Table(title=title, show_header=True, header_style="bold cyan")
         for h in headers:
@@ -129,9 +133,18 @@ class ETLLogger:
             t.add_row(*row)
         console.print(t)
 
-    def spark_job(self, job_id: int, name: str, stages: int, tasks: int,
-                  duration_s: float, shuffle_read: str = "-", shuffle_write: str = "-",
-                  input_size: str = "-", output_rows: str = "-") -> None:
+    def spark_job(
+        self,
+        job_id: int,
+        name: str,
+        stages: int,
+        tasks: int,
+        duration_s: float,
+        shuffle_read: str = "-",
+        shuffle_write: str = "-",
+        input_size: str = "-",
+        output_rows: str = "-",
+    ) -> None:
         """Log a Spark job summary line."""
         shuffle_info = ""
         if shuffle_read != "-" or shuffle_write != "-":
@@ -153,6 +166,7 @@ class ETLLogger:
 
 
 # ── Progress context managers ──
+
 
 @contextmanager
 def spinner_context(message: str):
@@ -185,6 +199,7 @@ def progress_bar(message: str, total: int):
 
 # ── Pipeline run tracking ──
 
+
 @dataclass
 class StageResult:
     """Result of a single pipeline stage with metrics."""
@@ -201,9 +216,9 @@ class PipelineRun:
     """Tracks a full pipeline execution, collects stage results, writes JSON run log."""
 
     def __init__(self, run_id: str | None = None, mode: str = "full"):
-        self.run_id = run_id or datetime.now(timezone.utc).strftime("run_%Y%m%d_%H%M%S")
+        self.run_id = run_id or datetime.now(UTC).strftime("run_%Y%m%d_%H%M%S")
         self.mode = mode
-        self.timestamp = datetime.now(timezone.utc).isoformat()
+        self.timestamp = datetime.now(UTC).isoformat()
         self.stages: list[StageResult] = []
         self._start_time = time.monotonic()
         self._stage_times: dict[str, float] = {}
