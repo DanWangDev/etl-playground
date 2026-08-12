@@ -6,7 +6,6 @@ column pruning automatically.
 """
 
 import time
-from pathlib import Path
 
 import duckdb
 
@@ -15,7 +14,7 @@ def run_lake_query(
     conn: duckdb.DuckDBPyConnection,
     sql: str,
     label: str = "query",
-    log: "ETLLogger | None" = None,
+    log: "object | None" = None,
 ) -> tuple[list, dict]:
     """Run a lake query and capture execution metrics.
 

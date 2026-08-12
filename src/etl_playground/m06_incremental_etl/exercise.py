@@ -13,11 +13,12 @@ Usage:
 """
 
 import argparse
-import time
 from datetime import date
-from pathlib import Path
 
-from etl_playground.m06_incremental_etl.backfill import backfill_partitions, parse_date_range
+from etl_playground.m06_incremental_etl.backfill import (
+    backfill_partitions,
+    parse_date_range,
+)
 from etl_playground.m06_incremental_etl.idempotent import (
     load_previous_state,
     save_run_state,
@@ -110,7 +111,7 @@ def _run_backfill(log, run, settings, args) -> None:
     log.info(f"Backfill range: {dates[0]} → {dates[-1]} ({len(dates)} dates)")
 
     # Mock process function for demonstration
-    def mock_process(d: date, l) -> int:
+    def mock_process(d: date, log) -> int:
         import random
         random.seed(hash(d.isoformat()))
         return random.randint(15000, 17000)

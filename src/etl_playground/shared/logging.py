@@ -30,6 +30,7 @@ from rich.progress import (
 )
 from rich.rule import Rule
 from rich.table import Table
+
 console = Console()
 
 

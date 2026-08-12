@@ -49,12 +49,7 @@ def find_new_partitions(
     curated_dates: set[date] = set()
     if curated_base.exists():
         for d in curated_base.iterdir():
-            if d.is_dir() and d.name.startswith("event_date="):
-                try:
-                    curated_dates.add(date.fromisoformat(d.name.split("=")[1]))
-                except (ValueError, IndexError):
-                    continue
-            elif d.is_dir() and d.name.startswith("ingest_date="):
+            if d.is_dir() and d.name.startswith("event_date=") or d.is_dir() and d.name.startswith("ingest_date="):
                 try:
                     curated_dates.add(date.fromisoformat(d.name.split("=")[1]))
                 except (ValueError, IndexError):

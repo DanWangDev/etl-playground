@@ -7,10 +7,7 @@ Provides:
 - Small deterministic test datasets
 """
 
-import os
-import tempfile
 from pathlib import Path
-from unittest.mock import patch
 
 import duckdb
 import pytest

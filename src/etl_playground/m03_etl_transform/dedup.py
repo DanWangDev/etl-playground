@@ -8,7 +8,7 @@ from pyspark.sql import DataFrame, Window
 from pyspark.sql import functions as F
 
 
-def deduplicate_by_event_id(df: DataFrame, log: "ETLLogger | None" = None) -> tuple[DataFrame, DataFrame]:
+def deduplicate_by_event_id(df: DataFrame, log: "object | None" = None) -> tuple[DataFrame, DataFrame]:
     """Deduplicate on event_id, keeping the latest timestamp.
 
     Uses a window function: row_number() OVER (PARTITION BY event_id ORDER BY event_timestamp DESC).
@@ -38,7 +38,7 @@ def deduplicate_by_event_id(df: DataFrame, log: "ETLLogger | None" = None) -> tu
     if log:
         log.info(f"Dedup: {input_count:,} input → {output_count:,} unique "
                  f"({dup_count:,} duplicates removed)")
-        log.spark(f"SHUFFLE triggered by: row_number() PARTITION BY event_id "
-                  f"(window function requires data redistribution)")
+        log.spark("SHUFFLE triggered by: row_number() PARTITION BY event_id "
+                  "(window function requires data redistribution)")
 
     return unique, duplicates

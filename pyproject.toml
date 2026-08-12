@@ -70,6 +70,18 @@ ignore = ["N812", "N818"]
 # Shared: duckdb regex, logging table_triple signature
 "src/etl_playground/shared/duckdb.py" = ["E501"]
 "src/etl_playground/shared/logging.py" = ["E501"]
+# Spark: hadoop.home.dir is the correct env var (Hadoop convention)
+"src/etl_playground/shared/spark.py" = ["SIM112"]
+# Test files: verbose Row declarations
+"tests/**/*.py" = ["E501"]
+# Schema docs, paths docs
+"src/etl_playground/m02_spark_foundation/schema.py" = ["E501"]
+"src/etl_playground/m02_spark_foundation/validators.py" = ["E501"]
+"src/etl_playground/shared/paths.py" = ["E501"]
+# M04 exercise: long path strings
+"src/etl_playground/m04_curated_output/exercise.py" = ["E501"]
+# M07 exercise: long format strings in detail output
+"src/etl_playground/m07_lake_queries/exercise.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"

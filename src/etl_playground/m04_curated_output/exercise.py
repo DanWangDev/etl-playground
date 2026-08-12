@@ -13,7 +13,7 @@ from etl_playground.m04_curated_output.writer import (
     list_partitions,
     write_partitioned_parquet,
 )
-from etl_playground.shared.logging import etl_context, get_logger
+from etl_playground.shared.logging import etl_context
 from etl_playground.shared.spark import create_spark_session
 
 

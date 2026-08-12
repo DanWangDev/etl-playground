@@ -23,7 +23,7 @@ from etl_playground.m03_etl_transform.enrich import (
     enrich_with_metadata,
 )
 from etl_playground.m03_etl_transform.normalize import normalize_timestamps
-from etl_playground.shared.logging import etl_context, get_logger
+from etl_playground.shared.logging import etl_context
 from etl_playground.shared.spark import create_spark_session
 
 

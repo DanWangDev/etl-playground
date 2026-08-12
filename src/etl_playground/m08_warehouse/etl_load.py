@@ -4,7 +4,6 @@ Loads dimension tables from reference data and fact tables from curated Parquet.
 Demonstrates surrogate key assignment, SCD handling, and fact grain enforcement.
 """
 
-from pathlib import Path
 
 import duckdb
 

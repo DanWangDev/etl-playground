@@ -12,7 +12,6 @@ from pathlib import Path
 
 import duckdb
 
-
 BENCHMARK_SQL = """
 SELECT
     region,

@@ -38,7 +38,11 @@ def write_partitioned_parquet(
     # Repartition to control output file count
     # Use a moderate number to avoid the small-file problem
     num_partitions = max(1, df.rdd.getNumPartitions())
-    log.spark(f"Output partitions: {num_partitions} (coalesced from {df.rdd.getNumPartitions()})")
+    if log:
+        log.spark(
+            f"Output partitions: {num_partitions} "
+            f"(coalesced from {df.rdd.getNumPartitions()})"
+        )
 
     (
         df
