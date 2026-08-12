@@ -8,7 +8,7 @@ from pyspark.sql import DataFrame, Window
 from pyspark.sql import functions as F
 
 
-def deduplicate_by_event_id(df: DataFrame, log: "ETLLogger") -> tuple[DataFrame, DataFrame]:
+def deduplicate_by_event_id(df: DataFrame, log: "ETLLogger | None" = None) -> tuple[DataFrame, DataFrame]:
     """Deduplicate on event_id, keeping the latest timestamp.
 
     Uses a window function: row_number() OVER (PARTITION BY event_id ORDER BY event_timestamp DESC).

@@ -21,20 +21,11 @@ from pyspark.sql import SparkSession
 def spark() -> SparkSession:
     """Session-scoped SparkSession for tests.
 
-    Uses local[2] for minimal parallelism and deterministic behavior.
+    Uses our shared spark factory which handles Windows/Hadoop compatibility.
     """
-    spark = (
-        SparkSession.builder
-        .appName("etl-playground-test")
-        .master("local[2]")
-        .config("spark.driver.memory", "1g")
-        .config("spark.sql.shuffle.partitions", "4")
-        .config("spark.sql.adaptive.enabled", "true")
-        .config("spark.sql.adaptive.coalescePartitions.enabled", "true")
-        .config("spark.ui.enabled", "false")
-        .config("spark.sql.session.timeZone", "UTC")
-        .getOrCreate()
-    )
+    from etl_playground.shared.spark import create_spark_session
+
+    spark = create_spark_session("etl-playground-test")
     spark.sparkContext.setLogLevel("ERROR")
     yield spark
     spark.stop()
