@@ -45,8 +45,12 @@ def test_fact_viewing_has_composite_primary_key():
     conn.execute(sql)
 
     # Try inserting a duplicate — should fail due to PK constraint
-    conn.execute("INSERT INTO dim_date VALUES (20260801, '2026-08-01', 1, 31, 8, 2026, 1)")
-    conn.execute("INSERT INTO dim_content VALUES (1, 'C1', 'Test', 'Action', 'Studio', '2026-01-01', 'movie', now())")
+    conn.execute(
+        "INSERT INTO dim_date VALUES (20260801, '2026-08-01', 1, 31, 8, 2026, 1)"
+    )
+    conn.execute(
+        "INSERT INTO dim_content VALUES (1, 'C1', 'Test', 'Action', 'Studio', '2026-01-01', 'movie', now())"
+    )
     conn.execute("INSERT INTO dim_region VALUES (1, 'UK', 'United Kingdom')")
     conn.execute("INSERT INTO dim_device VALUES (1, 'web')")
 
@@ -56,6 +60,7 @@ def test_fact_viewing_has_composite_primary_key():
 
     # Second insert with same PK should fail
     import pytest
+
     with pytest.raises(duckdb.duckdb.ConstraintException):
         conn.execute("""
             INSERT INTO fact_viewing VALUES (1, 1, 1, 20260801, 200, 6000.0, 100.0, 60, 0.80)

@@ -6,22 +6,32 @@ from etl_playground.m01_data_generator.generators import generate_viewing_events
 
 
 class NoopLog:
-    def info(self, *a, **kw): pass
-    def success(self, *a, **kw): pass
-    def detail(self, *a, **kw): pass
+    def info(self, *a, **kw):
+        pass
+
+    def success(self, *a, **kw):
+        pass
+
+    def detail(self, *a, **kw):
+        pass
 
 
 def test_duplicates_are_injected():
     """Generated events should include approximate duplicate_rate × scale duplicates."""
     content_items = [
-        {"content_id": f"CONT-{i:05d}", "title": f"Title {i}", "genre": "Action",
-         "release_date": "2025-01-01"}
+        {
+            "content_id": f"CONT-{i:05d}",
+            "title": f"Title {i}",
+            "genre": "Action",
+            "release_date": "2025-01-01",
+        }
         for i in range(10)
     ]
     launch_items = []
 
     # Temporarily override settings
     import os
+
     os.environ["DATA_SCALE"] = "2000"
     os.environ["DUPLICATE_RATE"] = "0.05"  # 5% → ~100 duplicates
     os.environ["MALFORMED_RATE"] = "0.0"
@@ -47,13 +57,18 @@ def test_duplicates_are_injected():
 def test_malformed_events_have_invalid_values():
     """Malformed events should contain out-of-range completion_rates."""
     content_items = [
-        {"content_id": f"CONT-{i:05d}", "title": f"Title {i}", "genre": "Drama",
-         "release_date": "2025-06-01"}
+        {
+            "content_id": f"CONT-{i:05d}",
+            "title": f"Title {i}",
+            "genre": "Drama",
+            "release_date": "2025-06-01",
+        }
         for i in range(5)
     ]
     launch_items = []
 
     import os
+
     os.environ["DATA_SCALE"] = "1000"
     os.environ["DUPLICATE_RATE"] = "0.0"
     os.environ["MALFORMED_RATE"] = "0.05"  # 5% → ~50 malformed
@@ -66,8 +81,7 @@ def test_malformed_events_have_invalid_values():
 
     # Find malformed events (completion_rate outside [0, 1])
     malformed = [
-        e for e in events
-        if e["completion_rate"] < 0 or e["completion_rate"] > 1
+        e for e in events if e["completion_rate"] < 0 or e["completion_rate"] > 1
     ]
     assert len(malformed) > 0, "Should have injected malformed events"
 

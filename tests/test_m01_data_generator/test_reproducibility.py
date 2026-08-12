@@ -6,9 +6,14 @@ from etl_playground.m01_data_generator.generators import generate_content_metada
 
 
 class NoopLog:
-    def info(self, *a, **kw): pass
-    def success(self, *a, **kw): pass
-    def detail(self, *a, **kw): pass
+    def info(self, *a, **kw):
+        pass
+
+    def success(self, *a, **kw):
+        pass
+
+    def detail(self, *a, **kw):
+        pass
 
 
 def test_same_seed_produces_same_output():
