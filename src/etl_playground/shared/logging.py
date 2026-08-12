@@ -119,7 +119,12 @@ class ETLLogger:
             t.add_row(key, val)
         console.print(t)
 
-    def table_triple(self, title: str, headers: tuple[str, str, str], rows: list[tuple[str, str, str]]) -> None:
+    def table_triple(
+        self,
+        title: str,
+        headers: tuple[str, str, str],
+        rows: list[tuple[str, str, str]],
+    ) -> None:
         """Print a three-column table."""
         t = Table(title=title, show_header=True, header_style="bold cyan")
         for h in headers:
@@ -128,9 +133,18 @@ class ETLLogger:
             t.add_row(*row)
         console.print(t)
 
-    def spark_job(self, job_id: int, name: str, stages: int, tasks: int,
-                  duration_s: float, shuffle_read: str = "-", shuffle_write: str = "-",
-                  input_size: str = "-", output_rows: str = "-") -> None:
+    def spark_job(
+        self,
+        job_id: int,
+        name: str,
+        stages: int,
+        tasks: int,
+        duration_s: float,
+        shuffle_read: str = "-",
+        shuffle_write: str = "-",
+        input_size: str = "-",
+        output_rows: str = "-",
+    ) -> None:
         """Log a Spark job summary line."""
         shuffle_info = ""
         if shuffle_read != "-" or shuffle_write != "-":
@@ -152,6 +166,7 @@ class ETLLogger:
 
 
 # ── Progress context managers ──
+
 
 @contextmanager
 def spinner_context(message: str):
@@ -183,6 +198,7 @@ def progress_bar(message: str, total: int):
 
 
 # ── Pipeline run tracking ──
+
 
 @dataclass
 class StageResult:

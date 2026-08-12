@@ -23,7 +23,10 @@ st.set_page_config(
 )
 
 st.title("📊 Content Analytics Dashboard")
-st.caption("ETL Playground — Streamlit ≈ QuickSight | Data: Synthetic content engagement events")
+st.caption(
+    "ETL Playground — Streamlit ≈ QuickSight | Data: Synthetic content engagement events"
+)
+
 
 # ── Database connection ──
 @st.cache_resource
@@ -41,9 +44,7 @@ conn = get_connection()
 st.sidebar.header("Filters")
 
 regions = ["UK", "US", "DE", "JP"]
-selected_regions = st.sidebar.multiselect(
-    "Regions", regions, default=regions
-)
+selected_regions = st.sidebar.multiselect("Regions", regions, default=regions)
 
 date_range = st.sidebar.date_input(
     "Date Range",
@@ -183,7 +184,9 @@ with col_left2:
             top_df,
             column_config={
                 "title": "Title",
-                "watch_hours": st.column_config.NumberColumn("Watch Hours", format="%.1f"),
+                "watch_hours": st.column_config.NumberColumn(
+                    "Watch Hours", format="%.1f"
+                ),
                 "views": st.column_config.NumberColumn("Views", format="%,d"),
             },
             hide_index=True,
@@ -219,7 +222,9 @@ with col_right2:
                 "on_time": "On Time",
                 "delayed": "Delayed",
                 "cancelled": "Cancelled",
-                "success_rate": st.column_config.NumberColumn("Success Rate", format="%.1f%%"),
+                "success_rate": st.column_config.NumberColumn(
+                    "Success Rate", format="%.1f%%"
+                ),
             },
             hide_index=True,
             use_container_width=True,

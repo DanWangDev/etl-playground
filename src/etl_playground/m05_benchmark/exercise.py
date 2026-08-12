@@ -18,14 +18,20 @@ from etl_playground.shared.logging import etl_context
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run CSV vs Parquet benchmark")
-    parser.add_argument("--csv-path", type=str, default="data/curated/viewing_events_csv")
-    parser.add_argument("--parquet-path", type=str, default="data/curated/viewing_events_enriched")
+    parser.add_argument(
+        "--csv-path", type=str, default="data/curated/viewing_events_csv"
+    )
+    parser.add_argument(
+        "--parquet-path", type=str, default="data/curated/viewing_events_enriched"
+    )
     args = parser.parse_args()
 
     with etl_context("M05_Benchmark") as (log, run):
         log.header("ETL Playground — Performance Benchmark")
         log.info("CSV (unpartitioned) vs Parquet (partitioned by event_date + region)")
-        log.info("Query: Top 20 content by watch hours, UK region, 2026-08-01 to 2026-08-07")
+        log.info(
+            "Query: Top 20 content by watch hours, UK region, 2026-08-01 to 2026-08-07"
+        )
 
         # ── Run benchmarks ──
         log.stage("Baseline: Unpartitioned CSV")
@@ -42,7 +48,9 @@ def main() -> None:
         compare_results(csv_result, parquet_result, log)
 
         # ── Save benchmark to docs ──
-        log.info("Benchmark results can be saved to docs/benchmark-results.md for reference.")
+        log.info(
+            "Benchmark results can be saved to docs/benchmark-results.md for reference."
+        )
 
         run.print_summary(log)
 

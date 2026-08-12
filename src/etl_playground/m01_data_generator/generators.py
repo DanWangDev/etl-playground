@@ -34,18 +34,36 @@ SUBSCRIPTION_TYPES = ["free", "basic", "premium", "family"]
 SUB_WEIGHTS = [0.40, 0.30, 0.20, 0.10]
 
 GENRES = [
-    "Action", "Comedy", "Drama", "Documentary", "Horror",
-    "Sci-Fi", "Romance", "Thriller", "Animation", "Kids",
-    "Reality", "Sports", "News", "Music", "Fantasy",
+    "Action",
+    "Comedy",
+    "Drama",
+    "Documentary",
+    "Horror",
+    "Sci-Fi",
+    "Romance",
+    "Thriller",
+    "Animation",
+    "Kids",
+    "Reality",
+    "Sports",
+    "News",
+    "Music",
+    "Fantasy",
 ]
 
 CONTENT_TYPES = ["movie", "series", "documentary", "special", "short"]
 CONTENT_TYPE_WEIGHTS = [0.35, 0.35, 0.15, 0.10, 0.05]
 
 STUDIOS = [
-    "Prime Studios", "Global Films", "Indie Productions",
-    "StreamFirst", "Classic Media", "NextGen Content",
-    "Horizon Entertainment", "Blue Sky Productions", "Urban Media Co",
+    "Prime Studios",
+    "Global Films",
+    "Indie Productions",
+    "StreamFirst",
+    "Classic Media",
+    "NextGen Content",
+    "Horizon Entertainment",
+    "Blue Sky Productions",
+    "Urban Media Co",
 ]
 
 
@@ -67,7 +85,9 @@ def generate_content_metadata(log) -> list[dict]:
     for i in range(n):
         content_id = f"CONT-{i:05d}"
         genre = random.choices(GENRES, k=1)[0]
-        content_type = random.choices(CONTENT_TYPES, weights=CONTENT_TYPE_WEIGHTS, k=1)[0]
+        content_type = random.choices(CONTENT_TYPES, weights=CONTENT_TYPE_WEIGHTS, k=1)[
+            0
+        ]
         studio = random.choice(STUDIOS)
 
         # Title: realistic-looking
@@ -84,14 +104,16 @@ def generate_content_metadata(log) -> list[dict]:
         days_ago = random.randint(100, 3000)
         release_date = date.today() - timedelta(days=days_ago)
 
-        items.append({
-            "content_id": content_id,
-            "title": title,
-            "genre": genre,
-            "studio": studio,
-            "release_date": release_date.isoformat(),
-            "content_type": content_type,
-        })
+        items.append(
+            {
+                "content_id": content_id,
+                "title": title,
+                "genre": genre,
+                "studio": studio,
+                "release_date": release_date.isoformat(),
+                "content_type": content_type,
+            }
+        )
 
     log.success(f"{len(items):,} content items generated")
     return items
@@ -108,7 +130,9 @@ def generate_content_launch(log: "object", content_items: list[dict]) -> list[di
     regions = settings.region_list
     launches = []
 
-    log.info(f"Generating launch records ({len(content_items)} × {len(regions)} regions)...")
+    log.info(
+        f"Generating launch records ({len(content_items)} × {len(regions)} regions)..."
+    )
 
     for item in content_items:
         content_id = item["content_id"]
@@ -129,17 +153,23 @@ def generate_content_launch(log: "object", content_items: list[dict]) -> list[di
                 status = "cancelled"
                 delay_days = 0
 
-            actual = planned + timedelta(days=delay_days) if status != "cancelled" else None
+            actual = (
+                planned + timedelta(days=delay_days) if status != "cancelled" else None
+            )
 
-            launches.append({
-                "content_id": content_id,
-                "region": region,
-                "planned_launch_date": planned.isoformat(),
-                "actual_launch_date": actual.isoformat() if actual else "",
-                "launch_status": status,
-            })
+            launches.append(
+                {
+                    "content_id": content_id,
+                    "region": region,
+                    "planned_launch_date": planned.isoformat(),
+                    "actual_launch_date": actual.isoformat() if actual else "",
+                    "launch_status": status,
+                }
+            )
 
-    log.success(f"{len(launches):,} launch records generated ({len(regions)} regions × {len(content_items)} content)")
+    log.success(
+        f"{len(launches):,} launch records generated ({len(regions)} regions × {len(content_items)} content)"
+    )
     return launches
 
 
@@ -172,7 +202,7 @@ def generate_viewing_events(
     for i, item in enumerate(content_items):
         # Zipf-like: top content gets more weight
         rank = i + 1
-        weight = 1.0 / (rank ** 0.8)  # Less steep than pure Zipf
+        weight = 1.0 / (rank**0.8)  # Less steep than pure Zipf
         content_popularity[item["content_id"]] = weight
 
     content_ids = [c["content_id"] for c in content_items]
@@ -191,8 +221,10 @@ def generate_viewing_events(
     log.info(f"Generating {n:,} viewing events across {days_span} days...")
     log.detail(f"Date range: {start_date} → {today}")
     log.detail(f"Regions: {', '.join(regions)}")
-    log.detail(f"Injected issues: {duplicates_planned:,} duplicates, "
-               f"{malformed_planned:,} malformed, {late_planned:,} late events")
+    log.detail(
+        f"Injected issues: {duplicates_planned:,} duplicates, "
+        f"{malformed_planned:,} malformed, {late_planned:,} late events"
+    )
 
     events = []
     dup_pool: list[dict] = []  # Pool for creating duplicates
@@ -211,14 +243,44 @@ def generate_viewing_events(
         # More viewing in evening hours
         hour = random.choices(
             range(24),
-            weights=[1, 1, 1, 1, 1, 2, 3, 4, 5, 5, 5, 5, 4, 4, 4, 5, 6, 7, 8, 8, 7, 5, 3, 2],
+            weights=[
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                3,
+                4,
+                5,
+                5,
+                5,
+                5,
+                4,
+                4,
+                4,
+                5,
+                6,
+                7,
+                8,
+                8,
+                7,
+                5,
+                3,
+                2,
+            ],
             k=1,
         )[0]
         minute = random.randint(0, 59)
         second = random.randint(0, 59)
         event_ts = datetime(
-            event_date_val.year, event_date_val.month, event_date_val.day,
-            hour, minute, second, tzinfo=UTC
+            event_date_val.year,
+            event_date_val.month,
+            event_date_val.day,
+            hour,
+            minute,
+            second,
+            tzinfo=UTC,
         )
 
         # Device type
@@ -248,7 +310,9 @@ def generate_viewing_events(
             completion_rate = 0.0
 
         # Subscription type
-        subscription_type = random.choices(SUBSCRIPTION_TYPES, weights=SUB_WEIGHTS, k=1)[0]
+        subscription_type = random.choices(
+            SUBSCRIPTION_TYPES, weights=SUB_WEIGHTS, k=1
+        )[0]
 
         # Customer
         customer_id = f"CUST-{random.randint(0, 99999):05d}"
@@ -284,7 +348,8 @@ def generate_viewing_events(
             original = random.choice(dup_pool)
             dup = dict(original)
             dup["event_timestamp"] = (
-                datetime.fromisoformat(original["event_timestamp"]) + timedelta(milliseconds=random.randint(1, 500))
+                datetime.fromisoformat(original["event_timestamp"])
+                + timedelta(milliseconds=random.randint(1, 500))
             ).isoformat()
             events.append(dup)
 
@@ -294,13 +359,17 @@ def generate_viewing_events(
         for _ in range(malformed_planned):
             bad = {
                 "event_id": str(uuid.uuid4()),
-                "customer_id": random.choice(content_ids),  # Wrong: using content_id as customer_id
+                "customer_id": random.choice(
+                    content_ids
+                ),  # Wrong: using content_id as customer_id
                 "content_id": random.choice(content_ids),
                 "event_timestamp": "NOT-A-TIMESTAMP",  # Malformed
                 "region": random.choice(["XX", "YY", ""]),  # Invalid region
                 "device_type": random.choice(DEVICE_TYPES),
                 "event_type": "unknown_event_type",  # Invalid enum
-                "watch_minutes": -1.0 if random.random() < 0.5 else 99999.0,  # Out of range
+                "watch_minutes": -1.0
+                if random.random() < 0.5
+                else 99999.0,  # Out of range
                 "completion_rate": random.choice([-0.5, 1.5, 2.0]),  # Out of [0,1]
                 "subscription_type": "ultra-premium",  # Invalid subscription
             }
@@ -318,8 +387,12 @@ def generate_viewing_events(
             # Set timestamp 3-7 days in the past (simulating late arrival)
             late_date = today - timedelta(days=random.randint(3, 7))
             late["event_timestamp"] = datetime(
-                late_date.year, late_date.month, late_date.day,
-                random.randint(0, 23), random.randint(0, 59), random.randint(0, 59),
+                late_date.year,
+                late_date.month,
+                late_date.day,
+                random.randint(0, 23),
+                random.randint(0, 59),
+                random.randint(0, 59),
                 tzinfo=UTC,
             ).isoformat()
             events.append(late)
@@ -327,9 +400,11 @@ def generate_viewing_events(
     # Shuffle to mix injected issues throughout the dataset
     random.shuffle(events)
 
-    log.success(f"{len(events):,} total events generated "
-                f"(base: {n:,} + duplicates: {duplicates_planned:,} "
-                f"+ malformed: {malformed_planned:,} + late: {late_planned:,})")
+    log.success(
+        f"{len(events):,} total events generated "
+        f"(base: {n:,} + duplicates: {duplicates_planned:,} "
+        f"+ malformed: {malformed_planned:,} + late: {late_planned:,})"
+    )
 
     # Breakdown by dimension
     log.detail("Event distribution:")
@@ -343,7 +418,14 @@ def generate_viewing_events(
 def write_content_metadata_csv(items: list[dict]) -> None:
     """Write content_metadata to CSV."""
     path = raw_content_metadata_path()
-    fieldnames = ["content_id", "title", "genre", "studio", "release_date", "content_type"]
+    fieldnames = [
+        "content_id",
+        "title",
+        "genre",
+        "studio",
+        "release_date",
+        "content_type",
+    ]
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
@@ -353,7 +435,13 @@ def write_content_metadata_csv(items: list[dict]) -> None:
 def write_content_launch_csv(items: list[dict]) -> None:
     """Write content_launch to CSV."""
     path = raw_content_launch_path()
-    fieldnames = ["content_id", "region", "planned_launch_date", "actual_launch_date", "launch_status"]
+    fieldnames = [
+        "content_id",
+        "region",
+        "planned_launch_date",
+        "actual_launch_date",
+        "launch_status",
+    ]
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
@@ -367,9 +455,16 @@ def write_viewing_events_csv(events: list[dict], ingest_date: date) -> None:
     path = dir_path / "events.csv"
 
     fieldnames = [
-        "event_id", "customer_id", "content_id", "event_timestamp",
-        "region", "device_type", "event_type", "watch_minutes",
-        "completion_rate", "subscription_type",
+        "event_id",
+        "customer_id",
+        "content_id",
+        "event_timestamp",
+        "region",
+        "device_type",
+        "event_type",
+        "watch_minutes",
+        "completion_rate",
+        "subscription_type",
     ]
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)

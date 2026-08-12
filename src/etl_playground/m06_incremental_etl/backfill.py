@@ -65,7 +65,7 @@ def backfill_partitions(
 
     log.info(f"Backfill: {total} dates to process")
     for i, d in enumerate(dates):
-        log.info(f"[{i+1}/{total}] Processing {d.isoformat()}...")
+        log.info(f"[{i + 1}/{total}] Processing {d.isoformat()}...")
         try:
             count = process_fn(d, log)
             results[d.isoformat()] = count

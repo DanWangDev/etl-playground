@@ -18,8 +18,7 @@ def normalize_timestamps(df: DataFrame, log: "object") -> DataFrame:
     """
 
     result = (
-        df
-        .withColumn("event_timestamp", F.to_utc_timestamp("event_timestamp", "UTC"))
+        df.withColumn("event_timestamp", F.to_utc_timestamp("event_timestamp", "UTC"))
         .withColumn("event_date", F.to_date("event_timestamp"))
         .withColumn("year", F.year("event_timestamp"))
         .withColumn("month", F.month("event_timestamp"))

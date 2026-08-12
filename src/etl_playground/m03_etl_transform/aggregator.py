@@ -20,18 +20,21 @@ def aggregate_daily(df: DataFrame, log: "object") -> DataFrame:
     log.spark("SHUFFLE: GROUP BY requires data redistribution by aggregation keys")
 
     agg = (
-        df
-        .groupBy("content_id", "region", "device_type", "event_date")
+        df.groupBy("content_id", "region", "device_type", "event_date")
         .agg(
             F.count("*").alias("views"),
             F.sum("watch_minutes").alias("total_watch_minutes"),
             F.round(F.sum("watch_minutes") / 60.0, 2).alias("total_watch_hours"),
-            F.sum(F.when(F.col("is_completed"), 1).otherwise(0)).alias("completed_views"),
+            F.sum(F.when(F.col("is_completed"), 1).otherwise(0)).alias(
+                "completed_views"
+            ),
             F.round(F.avg("completion_rate"), 4).alias("avg_completion_rate"),
         )
         .withColumn("event_date", F.to_date("event_date"))
     )
 
-    log.success(f"Aggregation complete: {agg.count():,} rows "
-                f"(grain: content + region + device + date)")
+    log.success(
+        f"Aggregation complete: {agg.count():,} rows "
+        f"(grain: content + region + device + date)"
+    )
     return agg

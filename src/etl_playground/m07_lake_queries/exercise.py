@@ -30,7 +30,9 @@ def main() -> None:
         parquet_path = "data/curated/viewing_events_enriched"
 
         log.info(f"Querying Parquet lake at: {parquet_path}/**/*.parquet")
-        log.info("DuckDB handles: partition pruning, column pruning, predicate pushdown")
+        log.info(
+            "DuckDB handles: partition pruning, column pruning, predicate pushdown"
+        )
         log.info("")
 
         # ── Query 1: Top Content in UK ──
@@ -39,7 +41,9 @@ def main() -> None:
         sql1 = TOP_CONTENT_UK_SQL.format(parquet_path=parquet_path)
         rows1, m1 = run_lake_query(conn, sql1, "top_content_uk", log)
         for row in rows1[:5]:
-            log.detail(f"  {row[0][:12]:12s} | {str(row[1])[:30]:30s} | {row[2]:8.1f}h | {row[3]:5d} views")
+            log.detail(
+                f"  {row[0][:12]:12s} | {str(row[1])[:30]:30s} | {row[2]:8.1f}h | {row[3]:5d} views"
+            )
         if len(rows1) > 5:
             log.detail(f"  ... and {len(rows1) - 5} more")
         run.end_stage("top_content_uk", output_rows=len(rows1))
@@ -61,7 +65,9 @@ def main() -> None:
         sql3 = COMPLETION_BY_DEVICE_SQL.format(parquet_path=parquet_path)
         rows3, m3 = run_lake_query(conn, sql3, "completion_by_device", log)
         for row in rows3:
-            log.detail(f"  {row[0]:10s} | {row[1]:5d} events | {row[2]:.2f} avg completion | {row[3]:5d} completed")
+            log.detail(
+                f"  {row[0]:10s} | {row[1]:5d} events | {row[2]:.2f} avg completion | {row[3]:5d} completed"
+            )
         run.end_stage("completion_by_device", output_rows=len(rows3))
 
         # ── Query 4: Region Breakdown ──
@@ -70,7 +76,9 @@ def main() -> None:
         sql4 = REGION_BREAKDOWN_SQL.format(parquet_path=parquet_path)
         rows4, m4 = run_lake_query(conn, sql4, "region_breakdown", log)
         for row in rows4:
-            log.detail(f"  {row[0]:2s} | {row[1]:4d} unique content | {row[2]:5d} events | {row[3]:6.0f}h")
+            log.detail(
+                f"  {row[0]:2s} | {row[1]:4d} unique content | {row[2]:5d} events | {row[3]:6.0f}h"
+            )
         run.end_stage("region_breakdown", output_rows=len(rows4))
 
         # ── Summary ──

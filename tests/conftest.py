@@ -40,8 +40,14 @@ def duckdb_conn():
 def temp_data_dir(tmp_path: Path) -> Path:
     """Temporary data directory mimicking the real data/ structure."""
     data_dir = tmp_path / "data"
-    for subdir in ["raw/viewing_events", "raw/content_metadata", "raw/content_launch",
-                    "curated/viewing_events", "curated/daily_aggregates", "rejected"]:
+    for subdir in [
+        "raw/viewing_events",
+        "raw/content_metadata",
+        "raw/content_launch",
+        "curated/viewing_events",
+        "curated/daily_aggregates",
+        "rejected",
+    ]:
         (data_dir / subdir).mkdir(parents=True, exist_ok=True)
     return data_dir
 

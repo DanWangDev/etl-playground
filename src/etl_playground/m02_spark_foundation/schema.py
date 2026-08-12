@@ -15,37 +15,43 @@ from pyspark.sql.types import (
 )
 
 # ── viewing_events schema ──
-VIEWING_EVENTS_SCHEMA = StructType([
-    StructField("event_id", StringType(), False),
-    StructField("customer_id", StringType(), True),
-    StructField("content_id", StringType(), True),
-    StructField("event_timestamp", TimestampType(), True),
-    StructField("region", StringType(), True),
-    StructField("device_type", StringType(), True),
-    StructField("event_type", StringType(), True),
-    StructField("watch_minutes", DoubleType(), True),
-    StructField("completion_rate", DoubleType(), True),
-    StructField("subscription_type", StringType(), True),
-])
+VIEWING_EVENTS_SCHEMA = StructType(
+    [
+        StructField("event_id", StringType(), False),
+        StructField("customer_id", StringType(), True),
+        StructField("content_id", StringType(), True),
+        StructField("event_timestamp", TimestampType(), True),
+        StructField("region", StringType(), True),
+        StructField("device_type", StringType(), True),
+        StructField("event_type", StringType(), True),
+        StructField("watch_minutes", DoubleType(), True),
+        StructField("completion_rate", DoubleType(), True),
+        StructField("subscription_type", StringType(), True),
+    ]
+)
 
 # ── content_metadata schema ──
-CONTENT_METADATA_SCHEMA = StructType([
-    StructField("content_id", StringType(), False),
-    StructField("title", StringType(), True),
-    StructField("genre", StringType(), True),
-    StructField("studio", StringType(), True),
-    StructField("release_date", StringType(), True),
-    StructField("content_type", StringType(), True),
-])
+CONTENT_METADATA_SCHEMA = StructType(
+    [
+        StructField("content_id", StringType(), False),
+        StructField("title", StringType(), True),
+        StructField("genre", StringType(), True),
+        StructField("studio", StringType(), True),
+        StructField("release_date", StringType(), True),
+        StructField("content_type", StringType(), True),
+    ]
+)
 
 # ── content_launch schema ──
-CONTENT_LAUNCH_SCHEMA = StructType([
-    StructField("content_id", StringType(), False),
-    StructField("region", StringType(), True),
-    StructField("planned_launch_date", StringType(), True),
-    StructField("actual_launch_date", StringType(), True),
-    StructField("launch_status", StringType(), True),
-])
+CONTENT_LAUNCH_SCHEMA = StructType(
+    [
+        StructField("content_id", StringType(), False),
+        StructField("region", StringType(), True),
+        StructField("planned_launch_date", StringType(), True),
+        StructField("actual_launch_date", StringType(), True),
+        StructField("launch_status", StringType(), True),
+    ]
+)
 
 # ── Valid enums (used by validators) ──
 VALID_REGIONS = {"UK", "US", "DE", "JP"}

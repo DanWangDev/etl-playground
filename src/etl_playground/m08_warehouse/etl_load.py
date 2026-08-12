@@ -4,7 +4,6 @@ Loads dimension tables from reference data and fact tables from curated Parquet.
 Demonstrates surrogate key assignment, SCD handling, and fact grain enforcement.
 """
 
-
 import duckdb
 
 
@@ -84,7 +83,9 @@ def load_dimensions(conn: duckdb.DuckDBPyConnection, log: "object") -> dict[str,
             FROM read_csv('data/raw/content_metadata/metadata.csv', header=true)
         ) t
     """)
-    counts["dim_content"] = conn.execute("SELECT COUNT(*) FROM dim_content").fetchone()[0]
+    counts["dim_content"] = conn.execute("SELECT COUNT(*) FROM dim_content").fetchone()[
+        0
+    ]
     log.success(f"dim_content: {counts['dim_content']:,} rows")
 
     return counts
@@ -120,9 +121,13 @@ def load_facts(conn: duckdb.DuckDBPyConnection, log: "object") -> dict[str, int]
         GROUP BY dc.content_key, dr.region_key, dd.device_key,
                  CAST(strftime(event_date, '%Y%m%d') AS INTEGER)
     """)
-    counts["fact_viewing"] = conn.execute("SELECT COUNT(*) FROM fact_viewing").fetchone()[0]
-    log.success(f"fact_viewing: {counts['fact_viewing']:,} rows "
-                f"(grain: content + region + device + date)")
+    counts["fact_viewing"] = conn.execute(
+        "SELECT COUNT(*) FROM fact_viewing"
+    ).fetchone()[0]
+    log.success(
+        f"fact_viewing: {counts['fact_viewing']:,} rows "
+        f"(grain: content + region + device + date)"
+    )
 
     return counts
 
@@ -163,5 +168,7 @@ def verify_warehouse(conn: duckdb.DuckDBPyConnection, log: "object") -> None:
     if orphan_content == 0 and orphan_region == 0:
         log.success("Referential integrity: PASS (no orphan fact rows)")
     else:
-        log.warn(f"Referential integrity: content orphans={orphan_content}, "
-                 f"region orphans={orphan_region}")
+        log.warn(
+            f"Referential integrity: content orphans={orphan_content}, "
+            f"region orphans={orphan_region}"
+        )

@@ -16,13 +16,12 @@ def derive_fields(df: DataFrame, log: "object") -> DataFrame:
     """
 
     result = (
-        df
-        .withColumn(
+        df.withColumn(
             "launch_delay_days",
             F.when(
-                (F.col("planned_launch_date").isNotNull()) &
-                (F.col("actual_launch_date").isNotNull()) &
-                (F.col("actual_launch_date") != ""),
+                (F.col("planned_launch_date").isNotNull())
+                & (F.col("actual_launch_date").isNotNull())
+                & (F.col("actual_launch_date") != ""),
                 F.datediff(
                     F.to_date("actual_launch_date"),
                     F.to_date("planned_launch_date"),

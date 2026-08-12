@@ -39,8 +39,7 @@ def read_viewing_events(
     input_path = str(raw_viewing_events_dir(ingest_date) / "events.csv")
 
     df = (
-        spark.read
-        .option("header", "true")
+        spark.read.option("header", "true")
         .option("mode", "PERMISSIVE")  # Don't fail on malformed rows; capture them
         .option("columnNameOfCorruptRecord", "_corrupt_record")
         .option("timestampFormat", "yyyy-MM-dd'T'HH:mm:ssXXX")
@@ -59,8 +58,7 @@ def read_content_metadata(spark: SparkSession) -> DataFrame:
     input_path = str(raw_content_metadata_path())
 
     df = (
-        spark.read
-        .option("header", "true")
+        spark.read.option("header", "true")
         .option("mode", "PERMISSIVE")
         .schema(CONTENT_METADATA_SCHEMA)
         .csv(input_path)
@@ -74,8 +72,7 @@ def read_content_launch(spark: SparkSession) -> DataFrame:
     input_path = str(raw_content_launch_path())
 
     df = (
-        spark.read
-        .option("header", "true")
+        spark.read.option("header", "true")
         .option("mode", "PERMISSIVE")
         .schema(CONTENT_LAUNCH_SCHEMA)
         .csv(input_path)

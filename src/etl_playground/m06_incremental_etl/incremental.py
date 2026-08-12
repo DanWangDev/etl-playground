@@ -49,7 +49,12 @@ def find_new_partitions(
     curated_dates: set[date] = set()
     if curated_base.exists():
         for d in curated_base.iterdir():
-            if d.is_dir() and d.name.startswith("event_date=") or d.is_dir() and d.name.startswith("ingest_date="):
+            if (
+                d.is_dir()
+                and d.name.startswith("event_date=")
+                or d.is_dir()
+                and d.name.startswith("ingest_date=")
+            ):
                 try:
                     curated_dates.add(date.fromisoformat(d.name.split("=")[1]))
                 except (ValueError, IndexError):
@@ -62,8 +67,7 @@ def find_new_partitions(
     # (reprocess D-2 through D to catch late-arriving events)
     window_start = today - timedelta(days=late_window_days)
     reprocess_dates = sorted(
-        d for d in curated_dates
-        if d >= window_start and d <= today
+        d for d in curated_dates if d >= window_start and d <= today
     )
 
     return new_dates, reprocess_dates

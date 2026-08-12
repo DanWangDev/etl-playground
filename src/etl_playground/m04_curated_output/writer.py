@@ -29,7 +29,6 @@ def write_partitioned_parquet(
     if partition_keys is None:
         partition_keys = ["event_date", "region"]
 
-
     if log:
         log.info(f"Writing partitioned Parquet to: {output_base}")
         log.spark(f"Partition keys: {', '.join(partition_keys)}")
@@ -45,10 +44,8 @@ def write_partitioned_parquet(
         )
 
     (
-        df
-        .repartition(*partition_keys)
-        .write
-        .mode("overwrite")
+        df.repartition(*partition_keys)
+        .write.mode("overwrite")
         .partitionBy(*partition_keys)
         .parquet(output_base)
     )
@@ -65,7 +62,6 @@ def list_partitions(output_base: str, log: "object") -> list[str]:
     Demonstrates the partition structure: event_date=YYYY-MM-DD/region=XX/
     """
     from pathlib import Path
-
 
     path = Path(output_base)
     if not path.exists():

@@ -22,7 +22,9 @@ def enrich_with_metadata(
     """
 
     log.info("Enriching with content_metadata (BROADCAST JOIN)...")
-    log.spark(f"Left: {df.count():,} viewing events | Right: {metadata_df.count():,} content items")
+    log.spark(
+        f"Left: {df.count():,} viewing events | Right: {metadata_df.count():,} content items"
+    )
     log.spark("Strategy: BROADCAST — content_metadata fits in executor memory (< 1 MB)")
     log.spark("This avoids shuffling the large viewing_events table")
 
