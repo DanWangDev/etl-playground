@@ -33,6 +33,7 @@ st.caption(
     "ETL Playground — Streamlit ≈ QuickSight | Data: Synthetic content engagement events"
 )
 
+
 # ── Database connection ──
 @st.cache_resource
 def get_connection() -> duckdb.DuckDBPyConnection:
@@ -83,9 +84,7 @@ with col_left:
 
 with col_right:
     st.markdown("**Completion Rate by Device Type**")
-    render_completion_by_device(
-        conn, PARQUET_PATH, start_date, end_date, region_filter
-    )
+    render_completion_by_device(conn, PARQUET_PATH, start_date, end_date, region_filter)
 
 # ── Row 3: Top Titles + Launch Success ──
 st.subheader("Content Performance")

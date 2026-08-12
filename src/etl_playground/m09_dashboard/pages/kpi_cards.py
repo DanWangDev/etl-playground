@@ -7,7 +7,6 @@ Queries the Parquet lake directly via DuckDB.
 from datetime import date
 
 import duckdb
-import pandas as pd
 import streamlit as st
 
 

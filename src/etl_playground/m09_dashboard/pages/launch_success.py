@@ -1,6 +1,5 @@
 """Launch Success Rate by Region table for the Streamlit dashboard."""
 
-from datetime import date
 
 import duckdb
 import streamlit as st
