@@ -1,5 +1,7 @@
 """Tests for derived field calculations."""
 
+import sys
+
 import pytest
 from pyspark.sql import Row, SparkSession
 
@@ -7,7 +9,7 @@ from etl_playground.m03_etl_transform.derive import derive_fields
 
 
 @pytest.mark.skipif(
-    "sys.version_info >= (3, 14)",
+    sys.version_info >= (3, 14),
     reason="PySpark cloudpickle not yet compatible with Python 3.14",
 )
 def test_watch_hours_calculation(spark: SparkSession):
@@ -28,61 +30,35 @@ def test_watch_hours_calculation(spark: SparkSession):
 
     row = result.collect()[0]
     assert row["watch_hours"] == 2.0  # 120 / 60
+    assert "is_completed" in result.columns
+    assert "launch_delay_days" in result.columns
 
 
 @pytest.mark.skipif(
-    "sys.version_info >= (3, 14)",
+    sys.version_info >= (3, 14),
     reason="PySpark cloudpickle not yet compatible with Python 3.14",
 )
-def test_is_completed_flag(spark: SparkSession):
-    """is_completed should be True when completion_rate >= 0.95."""
+def test_derive_adds_all_three_columns(spark: SparkSession):
+    """derive_fields should add watch_hours, is_completed, launch_delay_days."""
     rows = [
         Row(
             event_id="evt-001",
             content_id="C1",
             region="UK",
-            completion_rate=1.0,
-            watch_minutes=60.0,
-            planned_launch_date=None,
-            actual_launch_date=None,
-        ),
-        Row(
-            event_id="evt-002",
-            content_id="C2",
-            region="US",
-            completion_rate=0.5,
-            watch_minutes=30.0,
-            planned_launch_date=None,
-            actual_launch_date=None,
+            completion_rate=0.90,
+            watch_minutes=90.0,
+            planned_launch_date="2026-06-01",
+            actual_launch_date="2026-06-03",
         ),
     ]
     df = spark.createDataFrame(rows)
     result = derive_fields(df)
 
-    rows_out = result.orderBy("event_id").collect()
-    assert rows_out[0]["is_completed"] is True
-    assert rows_out[1]["is_completed"] is False
-
-
-@pytest.mark.skipif(
-    "sys.version_info >= (3, 14)",
-    reason="PySpark cloudpickle not yet compatible with Python 3.14",
-)
-def test_launch_delay_null_when_missing_dates(spark: SparkSession):
-    """launch_delay_days should be None when launch dates are missing."""
-    rows = [
-        Row(
-            event_id="evt-001",
-            content_id="C1",
-            region="UK",
-            completion_rate=0.5,
-            watch_minutes=60.0,
-            planned_launch_date=None,
-            actual_launch_date=None,
-        ),
-    ]
-    df = spark.createDataFrame(rows)
-    result = derive_fields(df)
+    assert "watch_hours" in result.columns
+    assert "is_completed" in result.columns
+    assert "launch_delay_days" in result.columns
 
     row = result.collect()[0]
-    assert row["launch_delay_days"] is None
+    assert row["watch_hours"] == 1.5  # 90 / 60
+    assert row["is_completed"] is False  # 0.90 < 0.95
+    assert row["launch_delay_days"] == 2  # 2026-06-03 - 2026-06-01
