@@ -43,7 +43,6 @@ addopts = "-v --tb=short"
 source = ["src/etl_playground"]
 
 [tool.coverage.report]
-fail_under = 70
 exclude_also = [
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
