@@ -15,11 +15,7 @@ import argparse
 import time
 from datetime import date
 
-from etl_playground.m02_spark_foundation.reader import (
-    read_content_launch,
-    read_content_metadata,
-    read_viewing_events,
-)
+from etl_playground.m02_spark_foundation.reader import read_viewing_events
 from etl_playground.m02_spark_foundation.validators import validate_all
 from etl_playground.shared.logging import get_logger
 from etl_playground.shared.paths import (

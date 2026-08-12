@@ -55,6 +55,8 @@ ignore = ["N812", "N818"]
 [tool.ruff.lint.per-file-ignores]
 # M01 generator: many long lines in title generation logic
 "src/etl_playground/m01_data_generator/generators.py" = ["E501"]
+# M02 Spark foundation: Spark config log lines
+"src/etl_playground/m02_spark_foundation/exercise.py" = ["E501"]
 # M03 modules: lots of explanatory log strings
 "src/etl_playground/m03_etl_transform/*.py" = ["E501"]
 # M05 benchmark: SQL strings
@@ -63,6 +65,11 @@ ignore = ["N812", "N818"]
 "src/etl_playground/m06_incremental_etl/*.py" = ["E501"]
 # M08 warehouse: SQL strings
 "src/etl_playground/m08_warehouse/*.py" = ["E501"]
+# M09 dashboard: Streamlit column config
+"src/etl_playground/m09_dashboard/*.py" = ["E501"]
+# Shared: duckdb regex, logging table_triple signature
+"src/etl_playground/shared/duckdb.py" = ["E501"]
+"src/etl_playground/shared/logging.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"

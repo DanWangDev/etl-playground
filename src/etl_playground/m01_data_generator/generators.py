@@ -11,12 +11,11 @@ Uses Faker for realistic-looking IDs and deterministic random seed for reproduci
 import csv
 import random
 import uuid
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 
 from faker import Faker
 
 from etl_playground.shared.config import get_settings
-from etl_playground.shared.logging import get_logger
 from etl_playground.shared.paths import (
     raw_content_launch_path,
     raw_content_metadata_path,
@@ -162,8 +161,6 @@ def generate_viewing_events(
     settings = get_settings()
     random.seed(settings.random_seed + 2)
     Faker.seed(settings.random_seed + 2)
-    fake = Faker()
-
     n = settings.data_scale
     regions = settings.region_list
     today = date.today()
@@ -183,8 +180,8 @@ def generate_viewing_events(
 
     # For launch join — build lookup keyed by (content_id, region)
     launch_lookup = {}
-    for l in launch_items:
-        launch_lookup[(l["content_id"], l["region"])] = l
+    for launch in launch_items:
+        launch_lookup[(launch["content_id"], launch["region"])] = launch
 
     # Data quality counters
     duplicates_planned = int(n * settings.duplicate_rate)
@@ -221,7 +218,7 @@ def generate_viewing_events(
         second = random.randint(0, 59)
         event_ts = datetime(
             event_date_val.year, event_date_val.month, event_date_val.day,
-            hour, minute, second, tzinfo=timezone.utc
+            hour, minute, second, tzinfo=UTC
         )
 
         # Device type
@@ -323,7 +320,7 @@ def generate_viewing_events(
             late["event_timestamp"] = datetime(
                 late_date.year, late_date.month, late_date.day,
                 random.randint(0, 23), random.randint(0, 59), random.randint(0, 59),
-                tzinfo=timezone.utc,
+                tzinfo=UTC,
             ).isoformat()
             events.append(late)
 

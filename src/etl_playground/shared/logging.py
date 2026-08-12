@@ -15,7 +15,7 @@ import json
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -30,8 +30,6 @@ from rich.progress import (
 )
 from rich.rule import Rule
 from rich.table import Table
-from rich.text import Text
-
 console = Console()
 
 
@@ -201,9 +199,9 @@ class PipelineRun:
     """Tracks a full pipeline execution, collects stage results, writes JSON run log."""
 
     def __init__(self, run_id: str | None = None, mode: str = "full"):
-        self.run_id = run_id or datetime.now(timezone.utc).strftime("run_%Y%m%d_%H%M%S")
+        self.run_id = run_id or datetime.now(UTC).strftime("run_%Y%m%d_%H%M%S")
         self.mode = mode
-        self.timestamp = datetime.now(timezone.utc).isoformat()
+        self.timestamp = datetime.now(UTC).isoformat()
         self.stages: list[StageResult] = []
         self._start_time = time.monotonic()
         self._stage_times: dict[str, float] = {}

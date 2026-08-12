@@ -32,7 +32,7 @@ def main() -> None:
 
     app_path = Path(__file__).parent / "app.py"
 
-    log.info(f"Starting Streamlit at http://localhost:8501 ...")
+    log.info("Starting Streamlit at http://localhost:8501 ...")
     log.info("Press Ctrl+C to stop the dashboard.")
 
     try:
