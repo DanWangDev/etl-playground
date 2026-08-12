@@ -17,7 +17,8 @@ class Settings(BaseSettings):
     """ETL Playground configuration from environment/.env."""
 
     # ── Project root ──
-    project_root: Path = Path(__file__).resolve().parent.parent.parent
+    # config.py is at src/etl_playground/shared/config.py → root is 4 levels up
+    project_root: Path = Path(__file__).resolve().parent.parent.parent.parent
 
     # ── Data Generator ──
     data_scale: int = 500_000
