@@ -20,7 +20,6 @@ def deduplicate_by_event_id(df: DataFrame, log: "ETLLogger | None" = None) -> tu
     Returns:
         (unique_df, duplicates_df) — unique records and rejected duplicates.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     input_count = df.count()
 
@@ -36,9 +35,10 @@ def deduplicate_by_event_id(df: DataFrame, log: "ETLLogger | None" = None) -> tu
     output_count = unique.count()
     dup_count = duplicates.count()
 
-    log.info(f"Dedup: {input_count:,} input → {output_count:,} unique "
-             f"({dup_count:,} duplicates removed)")
-    log.spark(f"SHUFFLE triggered by: row_number() PARTITION BY event_id "
-              f"(window function requires data redistribution)")
+    if log:
+        log.info(f"Dedup: {input_count:,} input → {output_count:,} unique "
+                 f"({dup_count:,} duplicates removed)")
+        log.spark(f"SHUFFLE triggered by: row_number() PARTITION BY event_id "
+                  f"(window function requires data redistribution)")
 
     return unique, duplicates

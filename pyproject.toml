@@ -50,6 +50,19 @@ exclude_also = [
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "SIM"]
+ignore = ["N812", "N818"]
+
+[tool.ruff.lint.per-file-ignores]
+# M01 generator: many long lines in title generation logic
+"src/etl_playground/m01_data_generator/generators.py" = ["E501"]
+# M03 modules: lots of explanatory log strings
+"src/etl_playground/m03_etl_transform/*.py" = ["E501"]
+# M05 benchmark: SQL strings
+"src/etl_playground/m05_benchmark/*.py" = ["E501"]
+# M06 incremental: log strings
+"src/etl_playground/m06_incremental_etl/*.py" = ["E501"]
+# M08 warehouse: SQL strings
+"src/etl_playground/m08_warehouse/*.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"

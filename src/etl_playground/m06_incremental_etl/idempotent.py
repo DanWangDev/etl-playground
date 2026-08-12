@@ -30,7 +30,7 @@ def compute_checksum(path: Path) -> str:
 def verify_idempotency(
     output_path: str,
     previous_counts: dict[str, int],
-    log: "ETLLogger",
+    log: "object",
 ) -> bool:
     """Verify that a rerun produced the same results.
 
@@ -42,7 +42,6 @@ def verify_idempotency(
     Returns:
         True if counts match, False otherwise.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     # Count rows in current output
     current_counts: dict[str, int] = {}

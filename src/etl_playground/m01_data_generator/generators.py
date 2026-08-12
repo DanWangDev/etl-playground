@@ -16,7 +16,7 @@ from datetime import date, datetime, timedelta, timezone
 from faker import Faker
 
 from etl_playground.shared.config import get_settings
-from etl_playground.shared.logging import get_logger, progress_bar
+from etl_playground.shared.logging import get_logger
 from etl_playground.shared.paths import (
     raw_content_launch_path,
     raw_content_metadata_path,
@@ -50,7 +50,7 @@ STUDIOS = [
 ]
 
 
-def generate_content_metadata(log: "ETLLogger") -> list[dict]:
+def generate_content_metadata(log) -> list[dict]:
     """Generate the content_metadata reference table.
 
     Returns a list of dicts: content_id, title, genre, studio, release_date, content_type.
@@ -98,7 +98,7 @@ def generate_content_metadata(log: "ETLLogger") -> list[dict]:
     return items
 
 
-def generate_content_launch(log: "ETLLogger", content_items: list[dict]) -> list[dict]:
+def generate_content_launch(log: "object", content_items: list[dict]) -> list[dict]:
     """Generate content_launch records — one per content per region.
 
     Returns a list of dicts: content_id, region, planned_launch_date, actual_launch_date, launch_status.
@@ -145,7 +145,7 @@ def generate_content_launch(log: "ETLLogger", content_items: list[dict]) -> list
 
 
 def generate_viewing_events(
-    log: "ETLLogger",
+    log: "object",
     content_items: list[dict],
     launch_items: list[dict],
 ) -> list[dict]:

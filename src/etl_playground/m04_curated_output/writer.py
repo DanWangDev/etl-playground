@@ -13,7 +13,7 @@ def write_partitioned_parquet(
     df: DataFrame,
     output_base: str,
     partition_keys: list[str] | None = None,
-    log: "ETLLogger" | None = None,
+    log: "object" | None = None,
 ) -> str:
     """Write DataFrame as partitioned Parquet.
 
@@ -29,7 +29,6 @@ def write_partitioned_parquet(
     if partition_keys is None:
         partition_keys = ["event_date", "region"]
 
-    from etl_playground.shared.logging import ETLLogger
 
     if log:
         log.info(f"Writing partitioned Parquet to: {output_base}")
@@ -56,14 +55,13 @@ def write_partitioned_parquet(
     return output_base
 
 
-def list_partitions(output_base: str, log: "ETLLogger") -> list[str]:
+def list_partitions(output_base: str, log: "object") -> list[str]:
     """List the partition directories created.
 
     Demonstrates the partition structure: event_date=YYYY-MM-DD/region=XX/
     """
     from pathlib import Path
 
-    from etl_playground.shared.logging import ETLLogger
 
     path = Path(output_base)
     if not path.exists():

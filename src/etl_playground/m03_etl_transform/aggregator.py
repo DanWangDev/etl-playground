@@ -8,14 +8,13 @@ from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 
 
-def aggregate_daily(df: DataFrame, log: "ETLLogger") -> DataFrame:
+def aggregate_daily(df: DataFrame, log: "object") -> DataFrame:
     """Aggregate viewing events to the daily analytical grain.
 
     Grain: one row per content_id + region + device_type + event_date.
 
     This is a SHUFFLE operation (GROUP BY requires data redistribution).
     """
-    from etl_playground.shared.logging import ETLLogger
 
     log.info("Aggregating to daily grain (content + region + device + date)...")
     log.spark("SHUFFLE: GROUP BY requires data redistribution by aggregation keys")

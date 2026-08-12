@@ -34,9 +34,8 @@ PARQUET_DATE_FILTER = (
 )
 
 
-def run_csv_baseline(csv_path: str, log: "ETLLogger") -> dict:
+def run_csv_baseline(csv_path: str, log: "object") -> dict:
     """Run benchmark query against unpartitioned CSV files."""
-    from etl_playground.shared.logging import ETLLogger
 
     conn = duckdb.connect(":memory:")
     conn.execute("SET enable_progress_bar = false")
@@ -71,9 +70,8 @@ def run_csv_baseline(csv_path: str, log: "ETLLogger") -> dict:
     return result
 
 
-def run_parquet_optimized(parquet_path: str, log: "ETLLogger") -> dict:
+def run_parquet_optimized(parquet_path: str, log: "object") -> dict:
     """Run benchmark query against partitioned Parquet files."""
-    from etl_playground.shared.logging import ETLLogger
 
     conn = duckdb.connect(":memory:")
     conn.execute("SET enable_progress_bar = false")
@@ -108,9 +106,8 @@ def run_parquet_optimized(parquet_path: str, log: "ETLLogger") -> dict:
     return result
 
 
-def compare_results(csv_result: dict, parquet_result: dict, log: "ETLLogger") -> None:
+def compare_results(csv_result: dict, parquet_result: dict, log: "object") -> None:
     """Print a comparison table of CSV vs Parquet benchmark results."""
-    from etl_playground.shared.logging import ETLLogger
 
     csv_time = csv_result["query_time_s"]
     pq_time = parquet_result["query_time_s"]

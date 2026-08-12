@@ -9,12 +9,11 @@ from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 
 
-def derive_fields(df: DataFrame, log: "ETLLogger") -> DataFrame:
+def derive_fields(df: DataFrame, log: "object") -> DataFrame:
     """Calculate derived analytical fields.
 
     These are narrow transformations — no shuffle required.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     result = (
         df

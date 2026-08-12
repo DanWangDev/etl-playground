@@ -9,14 +9,13 @@ from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 
 
-def normalize_timestamps(df: DataFrame, log: "ETLLogger") -> DataFrame:
+def normalize_timestamps(df: DataFrame, log: "object") -> DataFrame:
     """Normalize timestamps and derive date fields.
 
     This is a narrow transformation — no shuffle required.
 
     Returns DataFrame with added columns: event_date, year, month, day.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     result = (
         df

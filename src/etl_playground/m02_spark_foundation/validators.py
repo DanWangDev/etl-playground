@@ -88,13 +88,12 @@ def validate_enum_fields(df: DataFrame) -> tuple[DataFrame, DataFrame]:
     return valid, rejected
 
 
-def validate_all(df: DataFrame, log: "ETLLogger") -> tuple[DataFrame, DataFrame]:
+def validate_all(df: DataFrame, log: "object") -> tuple[DataFrame, DataFrame]:
     """Run all validators in sequence, accumulating rejected rows.
 
     Returns:
         (clean_df, all_rejected_df) where all_rejected_df has a rejection_reason column.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     total_input = df.count()
 

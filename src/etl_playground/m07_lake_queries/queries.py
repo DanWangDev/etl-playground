@@ -28,7 +28,6 @@ def run_lake_query(
     Returns:
         (result_rows, metrics_dict) with timing and scan info.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     if log:
         log.info(f"Running lake query: {label}")

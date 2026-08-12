@@ -9,12 +9,11 @@ from pathlib import Path
 import duckdb
 
 
-def load_dimensions(conn: duckdb.DuckDBPyConnection, log: "ETLLogger") -> dict[str, int]:
+def load_dimensions(conn: duckdb.DuckDBPyConnection, log: "object") -> dict[str, int]:
     """Load all dimension tables from source data.
 
     Returns dict of dimension name → row count.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     counts: dict[str, int] = {}
 
@@ -92,12 +91,11 @@ def load_dimensions(conn: duckdb.DuckDBPyConnection, log: "ETLLogger") -> dict[s
     return counts
 
 
-def load_facts(conn: duckdb.DuckDBPyConnection, log: "ETLLogger") -> dict[str, int]:
+def load_facts(conn: duckdb.DuckDBPyConnection, log: "object") -> dict[str, int]:
     """Load fact tables from curated Parquet into star schema.
 
     Performs the dimension key lookups and enforces the fact grain.
     """
-    from etl_playground.shared.logging import ETLLogger
 
     counts: dict[str, int] = {}
 
@@ -130,9 +128,8 @@ def load_facts(conn: duckdb.DuckDBPyConnection, log: "ETLLogger") -> dict[str, i
     return counts
 
 
-def verify_warehouse(conn: duckdb.DuckDBPyConnection, log: "ETLLogger") -> None:
+def verify_warehouse(conn: duckdb.DuckDBPyConnection, log: "object") -> None:
     """Run referential integrity and grain uniqueness checks."""
-    from etl_playground.shared.logging import ETLLogger
 
     log.stage("Warehouse Verification")
 

@@ -23,7 +23,7 @@ from etl_playground.m01_data_generator.generators import (
     write_viewing_events_csv,
 )
 from etl_playground.shared.config import get_settings
-from etl_playground.shared.logging import get_logger, progress_bar
+from etl_playground.shared.logging import get_logger
 from etl_playground.shared.paths import ensure_all_dirs
 
 
@@ -83,15 +83,21 @@ def main() -> None:
     )
     size_mb = events_path.stat().st_size / (1024 * 1024) if events_path.exists() else 0
 
-    log.detail(f"Written: data/raw/viewing_events/ingest_date={ingest_date.isoformat()}/"
-               f"events.csv ({size_mb:.1f} MB)")
+    log.detail(
+        f"Written: data/raw/viewing_events/ingest_date={ingest_date.isoformat()}/"
+        f"events.csv ({size_mb:.1f} MB)"
+    )
 
     # ── Summary ──
     elapsed = time.monotonic() - t0
     log.header("Generation Complete")
     log.table("Output Summary", [
         ("Content metadata", f"{len(content_items):,} items"),
-        ("Content launches", f"{len(launch_items):,} records ({len(settings.region_list)} regions × {len(content_items)} content)"),
+        (
+            "Content launches",
+            f"{len(launch_items):,} records "
+            f"({len(settings.region_list)} regions × {len(content_items)} content)",
+        ),
         ("Viewing events", f"{len(events):,} events ({size_mb:.1f} MB)"),
         ("Date range", f"{settings.start_date} → {ingest_date.isoformat()}"),
         ("Total time", f"{elapsed:.1f}s"),
